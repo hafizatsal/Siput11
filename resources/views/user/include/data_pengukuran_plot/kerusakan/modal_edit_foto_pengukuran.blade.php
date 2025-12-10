@@ -1,0 +1,78 @@
+<div class="modal fade" id="modal_edit_foto">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Ubah Foto Pengukuran</h4>
+      </div>
+      <div class="modal-body">
+
+        <form role="form" method="post" action="{{route('user.edit_foto_kerusakan')}}" enctype="multipart/form-data"
+        onsubmit="document.getElementById('edit_foto').disabled=true;
+        document.getElementById('edit_foto').value='Sedang menyimpan...';">
+          {{csrf_field()}}
+          <div class="box-body">
+
+            <div class="form-group">
+                <label>Judul Foto *</label>
+                <input type="text" class="form-control" name="edit_judul_foto" id="edit_judul_foto" value="">
+            </div>
+
+              <input type="hidden" id="id_foto" name="id_foto" value="">
+
+              <div class="form-group">
+                <label for="edit_file_foto">Foto *</label>
+                  <input type="file" name="edit_file_foto" accept="image/*">
+              </div>
+
+              <div class="form-group">
+                  <label>Keterangan</label>
+                  <textarea class="form-control" name="edit_keterangan_foto" id="edit_keterangan_foto" rows="3" placeholder="Masukkan keterangan ..."></textarea>
+              </div>
+
+          </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+        <input type="submit" id="edit_foto" class="btn btn-primary" value="Simpan">
+      </div>
+          </form>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+<script type="text/javascript">
+$(document).ready(function(){
+$('#modal_edit_foto').on('show.bs.modal', function(event){
+  var button = $(event.relatedTarget);
+  var foto = button.data('foto');
+  var modal = $(this)
+  modal.find('.modal-body #id_foto').val(foto);
+
+
+  $.ajax({
+      type: 'post',
+      url: '{{route("user.json_foto_kerusakan")}}',
+      data: {
+        '_token': $('input[name=_token]').val(),
+        'id': foto,
+      },
+      success: function (data) {
+        if (data.length > 0) {
+          $.each(data, function (key, value) {
+          $('#edit_judul_foto').val(value['title']);
+          $('#edit_keterangan_foto').val(value['keterangan']);
+          });
+      }
+    }
+    });
+
+
+});
+});
+</script>

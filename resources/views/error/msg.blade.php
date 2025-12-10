@@ -1,0 +1,10 @@
+@extends('error.layout')
+@section('title')
+{{$title}}
+@endsection
+@section('header')
+{{$header}}
+@endsection
+@section('msg')
+{{$msg}}
+@endsection

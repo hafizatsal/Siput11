@@ -1,0 +1,91 @@
+/*
+ * Page: Login & Register
+ * ----------------------
+ */
+ .form-control{
+	 border-radius:27px;
+ }
+ .login-logo,
+ .register-logo {
+   font-size: 35px;
+   text-align: center;
+   margin-bottom: 25px;
+   font-weight: 300;
+   border-bottom: 6px solid grey;
+
+ }
+ .login-logo a,
+ .register-logo a {
+   color: #444;
+ }
+ .login-page,
+ .register-page {
+   background: url('../img/x.jpg')   no-repeat center center fixed;
+   -webkit-background-size: cover;
+   -moz-background-size: cover;
+   -o-background-size: cover;
+   background-size: cover;
+ }
+ .login-box,
+ .register-box {
+   width: 360px;
+   margin: 7% auto;
+ }
+ @media (max-width: 768px) {
+   .login-box,
+   .register-box {
+     width: 90%;
+     margin-top: 7% auto;
+   }
+ }
+
+ .login-box-body,
+ .register-box-body {
+   background: rgba(255,255,255,0.8);
+   padding: 20px;
+   border-top: 0;
+   color: #666;
+
+ }
+ .div-left {
+   background:#fff;
+   height:100%;
+   width:29%;
+   float:left;
+   border-right: 5px solid grey;
+ }
+ .div-left-img {
+    width:50%;
+    height:100px;
+    float:left;
+    padding-bottom: 120px;
+    border-right: 5px solid grey;
+  }
+ .div-right {
+  width:70%;
+   height:100px;
+   float:right;
+   padding-bottom: 120px;
+ }
+ .div-right-img{
+   width:50%;
+   height:100px;
+   float:right;
+   padding-bottom: 120px;
+  }
+ .div-right h2{
+     color: #fff;
+ }
+ .login-box-body .form-control-feedback,
+ .register-box-body .form-control-feedback {
+   color: #777;
+ }
+ .login-box-msg,
+ .register-box-msg {
+   margin: 0;
+   text-align: center;
+   padding: 0 20px 20px 20px;
+ }
+ .social-auth-links {
+   margin: 10px 0;
+ }

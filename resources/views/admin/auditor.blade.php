@@ -1,0 +1,8 @@
+@extends('layouts.adminlayout')
+@section('title','Halaman Utama')
+@section('active_home','active')
+@section('judul_halaman','Halaman Utama Auditor')
+@section('judul_kecil','informasi umum auditor')
+@section('title_box','Selamat datang di Sistem Informasi Penilaian Kesehatan Hutan Auditor')
+@section('isi_pesan','Berikut ini adalah prosedur untuk menggunakan sistem ini')
+@section('footer_pesan','sumber:google')
