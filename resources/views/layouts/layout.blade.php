@@ -3,7 +3,8 @@
 
 <head>
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('img/Siput.png') }}" />
-    <meta charset="utf-8" name="csrf-token" content="{{ csrf_token() }}">
+    <meta charset="utf-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>SIPUT | @yield('title')</title>
     <!-- Tell the browser to be responsive to screen width -->
@@ -23,7 +24,7 @@
     <!-- AdminLTE Skins. Choose a skin from the css/skins
        folder instead of downloading all of them to reduce the load. -->
     <link rel="stylesheet" href="{{ asset('Admin/dist/css/skins/_all-skins.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/animate.css') }}">
+
     @yield('css')
     <style>
         .table-striped>thead {
@@ -235,9 +236,12 @@
 
 <body class="hold-transition skin-blue sidebar-mini">
     @php
-    $foto = DB::table('foto_user')->where('id_user', Auth::id())->first();
-    $foto_get = DB::table('foto_user')->where('id_user', Auth::id())->get();
-@endphp
+        $foto = DB::table('foto_user')->where('id_user', Auth::id())->first();
+        $foto_get = DB::table('foto_user')->where('id_user', Auth::id())->get();
+
+        $fotoUrl = $foto ? asset('upload/profile/' . $foto->filename) : asset('Admin/dist/img/default-user.png');
+    @endphp
+
 
     <div class="wrapper">
 
@@ -266,13 +270,13 @@
                         <!-- User Account: style can be found in dropdown.less -->
                         <li class="dropdown user user-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                <img src="#" id="img1" class="user-image" alt="User Image">
+                                <img src="{{ $fotoUrl }}" id="img1" class="user-image" alt="User Image">
                                 <span class="hidden-xs">{{ Auth::user()->nama }}</span>
                             </a>
                             <ul class="dropdown-menu">
                                 <!-- User image -->
                                 <li class="user-header">
-                                    <img src="#" id="img2" class="img-circle" alt="User Image">
+                                    <img src="{{ $fotoUrl }}" id="img2" class="img-circle" alt="User Image">
 
                                     <p>
                                         {{ Auth::user()->nama }}
@@ -283,12 +287,24 @@
                                 <!-- Menu Footer-->
                                 <li class="user-footer">
                                     <div class="pull-left">
-                                        <a href="{{ route('profile') }}" class="btn btn-default btn-flat">Profile</a>
+                                        <a href="{{ route('user.profile') }}"
+                                            class="btn btn-default btn-flat">Profile</a>
                                     </div>
+
                                     <div class="pull-right">
-                                        <a href="{{ route('logout') }}" class="btn btn-default btn-flat">Log out</a>
+                                        <a href="#" class="btn btn-default btn-flat"
+                                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                            Log out
+                                        </a>
+
+                                        <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                            style="display: none;">
+                                            @csrf
+                                        </form>
                                     </div>
                                 </li>
+
+
                             </ul>
                         </li>
 
@@ -303,7 +319,8 @@
                 <!-- Sidebar user panel -->
                 <div class="user-panel">
                     <div class="pull-left image">
-                        <img src="#" id="img3" class="img-circle" alt="User Image" style="height:50px;">
+                        <img src="{{ $fotoUrl }}" id="img3" class="img-circle" alt="User Image"
+                            style="height:50px;">
                     </div>
                     <div class="pull-left info">
                         <p>{{ Auth::user()->nama }}</p>
@@ -314,7 +331,7 @@
                 <ul class="sidebar-menu" data-widget="tree">
                     <li class="header">PANEL UTAMA</li>
 
-                    <li class="@yield('active_home')"><a href="{{ route('home') }}"><i class="fa fa-home"></i>
+                    <li class="@yield('active_home')"><a href="{{ route('user.home') }}"><i class="fa fa-home"></i>
                             <span>Home</span></a></li>
                     <li class="treeview @yield('active_plot_ukur')">
                         <a href="#">
@@ -326,21 +343,21 @@
                         <ul class="treeview-menu">
                             {{-- 📌 Data Kategori Klaster --}}
                             <li class="@yield('active_data_klaster')">
-                                <a href="{{ route('data_klaster') }}">
+                                <a href="{{ route('user.data_klaster') }}">
                                     <i class="fa fa-circle-o"></i> Data Kategori Klaster
                                 </a>
                             </li>
 
                             {{-- 📌 Data Klaster Plot --}}
                             <li class="@yield('active_data_klaster_plot')">
-                                <a href="{{ route('data_klaster_plot') }}">
+                                <a href="{{ route('user.data_klaster_plot') }}">
                                     <i class="fa fa-circle-o"></i> Data Klaster Plot
                                 </a>
                             </li>
 
                             {{-- 📌 Data Plot --}}
                             <li class="@yield('active_data_plot')">
-                                <a href="{{ route('data_plot') }}">
+                                <a href="{{ route('user.data_plot') }}">
                                     <i class="fa fa-circle-o"></i> Data Plot
                                 </a>
                             </li>
@@ -361,39 +378,39 @@
 
                             {{-- 📌 Produktivitas --}}
                             <li class="@yield('active_produktivitas')">
-                                <a href="{{ route('data_pengukuranp') }}">
+                                <a href="{{ route('user.data_pengukuranp') }}">
                                     <i class="fa fa-circle-o"></i> Produktivitas
                                 </a>
                             </li>
 
                             {{-- 📌 Vitalitas --}}
                             <li class="@yield('active_vitalitas')">
-                                <a href="{{ route('data_pengukuranv') }}">
+                                <a href="{{ route('user.data_pengukuranv') }}">
                                     <i class="fa fa-circle-o"></i> Vitalitas
                                 </a>
                             </li>
 
                             {{-- 📌 Biodiversitas --}}
                             <li class="@yield('active_biodiversitas')">
-                                <a href="{{ route('data_pengukuranb') }}">
+                                <a href="{{ route('user.data_pengukuranb') }}">
                                     <i class="fa fa-circle-o"></i> Biodiversitas
                                 </a>
                             </li>
 
                             {{-- 📌 Kualitas Tapak --}}
                             <li class="@yield('active_kualitas_tapak')">
-                                <a href="{{ route('data_pengukurank') }}">
+                                <a href="{{ route('user.data_pengukurank') }}">
                                     <i class="fa fa-circle-o"></i> Kualitas Tapak
                                 </a>
                             </li>
                         </ul>
                     </li>
 
-                        {{-- 📌 Penilaian --}}
+                    {{-- 📌 Penilaian --}}
                     <li class="treeview @yield('active_penilaian')">
                         <a href="#">
 
-                            {{-- 📌 Penilaian KesHut--}}
+                            {{-- 📌 Penilaian KesHut --}}
                             <i class="fa fa-fw fa-pie-chart"></i> <span>Penilaian KesHut</span>
                             <span class="pull-right-container">
                                 <i class="fa fa-angle-left pull-right"></i>
@@ -402,7 +419,7 @@
                         <ul class="treeview-menu">
                             {{-- 📌 Nilai Akhir KesHut --}}
                             <li class="@yield('active_nilai_akhir')">
-                                <a href="{{ route('penilaian_klaster') }}">
+                                <a href="{{ route('user.penilaian_klaster') }}">
                                     <i class="fa fa-circle-o"></i> Nilai Akhir KesHut
                                 </a>
                             </li>
@@ -494,9 +511,37 @@
 
     <!-- jQuery 3 -->
     <script src="{{ asset('Admin/bower_components/jquery/dist/jquery.min.js') }}"></script>
+
+    <script>
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
+            }
+        });
+    </script>
     <!-- Bootstrap 3.3.7 -->
     <script src="{{ asset('Admin/bower_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
     @yield('data_table')
+    {{-- GLOBAL AJAX ERROR HANDLER --}}
+    <script>
+        $(document).ajaxError(function(event, xhr) {
+            if (xhr.status === 401) {
+                alert('Session anda habis, silakan login ulang');
+            } else if (xhr.status === 403) {
+                alert('Anda tidak memiliki akses');
+            } else if (xhr.status === 503) {
+                alert('Sistem sedang maintenance');
+            }
+        });
+    </script>
+    <!-- 3️⃣ Plugin (SETELAH jQuery) -->
+    <!--
+<script src="{{ asset('Admin/plugins/input-mask/jquery.inputmask.js') }}"></script>
+<script src="{{ asset('Admin/plugins/input-mask/jquery.inputmask.extensions.js') }}"></script>
+-->
+
     <!-- SlimScroll -->
     <script src="{{ asset('Admin/bower_components/jquery-slimscroll/jquery.slimscroll.min.js') }}"></script>
     <!-- FastClick -->
@@ -532,6 +577,16 @@
             <div class="overlay__content"><span class="spinner"></span></div>
         </div>
     </div>
+
+    <style>
+        .modal {
+            z-index: 1050 !important;
+        }
+
+        .modal-backdrop {
+            z-index: 1040 !important;
+        }
+    </style>
 </body>
 
 </html>

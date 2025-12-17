@@ -19,9 +19,7 @@
 							<div class="tab-content">
 								<!-- tab 5 -->
 								<div class="tab-pane active" id="tab_5">
-                  <form id="formsatu" method="post" class="" action="{{route('user.insert_klaster')}}"
-                  onsubmit="document.getElementById('submit').disabled=true;
-                  document.getElementById('submit').value='Sedang menyimpan...';">
+                  <form id="formsatu" method="post">
                   {{csrf_field()}}
                     <input type="hidden" id="id_tambah_data_klaster" name="id_tambah_data_klaster" value="{{$data_nama_klaster->id_data_klaster}}">
                     <input type="hidden" id="tahun_pengukuran" name="tahun_pengukuran" value="{{$data_pengukuran->tahun_pengukuran}}">
@@ -354,10 +352,9 @@
 										<div class="col-md-12">
 											<br/>
 											<button type="button" id="btnkmbli" class="btn btn-default">Kembali</button>
-											<input type="submit" disabled id="submit" class="btn btn-primary pull-right" value="Simpan" />
+											<button type="button" id="submit" class="btn btn-primary pull-right">Simpan</button>
 										</div>
 									</div>
-									</form>
 								</div>
 							</div>
 						</div>
@@ -371,17 +368,26 @@
 	<!-- /.modal -->
 </div>
 
-<script src="{{asset('Admin/modal_ajax.min.js')}}"></script>
+
 <!-- InputMask -->
-<script src="{{asset('Admin/plugins/input-mask/jquery.inputmask.js')}}"></script>
-<script src="{{asset('Admin/plugins/input-mask/jquery.inputmask.extensions.js')}}"></script>
+
+<!-- 3️⃣ BARU PLUGIN -->
+<!-- <script src="{{ asset('Admin/plugins/input-mask/jquery.inputmask.js') }}"></script>
+<script src="{{ asset('Admin/plugins/input-mask/jquery.inputmask.extensions.js') }}"></script> -->
 
 <script type = "text/javascript">
-  $('[data-mask]').inputmask()
-  $(document).ready(function () {
-  // variable untuk validasi, jika 0 artinya masih salah, jika 1 benar
-  // 11 adalah jumlah input text nya yang menyatakan benar semua baru
-  // bisa lanjut ke tab selanjutnya
+$(document).ready(function (){
+  $('[data-mask]').inputmask();
+        // variable untuk validasi, jika 0 artinya masih salah, jika 1 benar
+        // 11 adalah jumlah input text nya yang menyatakan benar semua baru
+        // bisa lanjut ke tab selanjutnya
+       $('#formsatu').on('submit', function (e) {
+    if (!$(this).data('allow-submit')) {
+        e.preventDefault();
+        return false;
+    }
+});
+
   var validate = 0;
   // untuk validasi lintang
   var v_lintang_klaster = 1;
@@ -509,114 +515,162 @@
     }
   });
 
-  // untuk validasi nama provinsi
-  var v_provinsi = 0;
-  $('#input-provinsi').on('change', function () {
-    provinsi = $('#provinsi').val();
-    if (provinsi != "") {
-      $('#input-provinsi').attr("class", "form-group has-success");
-      $('#id_provinsi').hide();
-      v_provinsi = 1;
-      v_kabupaten = 0;
-      v_kecamatan = 0;
-      v_desa = 0;
-      $('#id_kabupaten').show();
-      $('#input-kabupaten').attr("class", "form-group has-error");
-      $('#id_kecamatan').show();
-      $('#input-kecamatan').attr("class", "form-group has-error");
-      $('#id_desa').show();
-      $('#input-desa').attr("class", "form-group has-error");
-    } else {
-      v_provinsi = 0;
-      v_kabupaten = 0;
-      v_kecamatan = 0;
-      v_desa = 0;
-      $('#id_provinsi').show();
-      $('#input-provinsi').attr("class", "form-group has-error");
-      $('#id_kabupaten').show();
-      $('#input-kabupaten').attr("class", "form-group has-error");
-      $('#id_kecamatan').show();
-      $('#input-kecamatan').attr("class", "form-group has-error");
-      $('#id_desa').show();
-      $('#input-desa').attr("class", "form-group has-error");
-    }
-  });
+// VALIDASI DROPDOWN WILAYAH
+var v_provinsi = 0;
+var v_kabupaten = 0;
+var v_kecamatan = 0;
+var v_desa = 0;
 
-  // untuk validasi nama kabupaten
-  var v_kabupaten = 0;
-  $('#input-kabupaten').on('change', function () {
-    kabupaten = $('#kabupaten').val();
-    if (kabupaten != "") {
-      $('#input-kabupaten').attr("class", "form-group has-success");
-      $('#id_kabupaten').hide();
-      v_kabupaten = 1;
-      v_kecamatan = 0;
-      v_desa = 0;
-      $('#id_kecamatan').show();
-      $('#input-kecamatan').attr("class", "form-group has-error");
-      $('#id_desa').show();
-      $('#input-desa').attr("class", "form-group has-error");
-    } else {
-      v_kabupaten = 0;
-      v_kecamatan = 0;
-      v_desa = 0;
-      $('#id_kabupaten').show();
-      $('#input-kabupaten').attr("class", "form-group has-error");
-      $('#id_kecamatan').show();
-      $('#input-kecamatan').attr("class", "form-group has-error");
-      $('#id_desa').show();
-      $('#input-desa').attr("class", "form-group has-error");
-    }
-  });
 
-  // untuk validasi nama kecamatan
-  var v_kecamatan = 0;
-  $('#input-kecamatan').on('change', function () {
-    kecamatan = $('#kecamatan').val();
-    if (kecamatan != "") {
-      $('#input-kecamatan').attr("class", "form-group has-success");
-      $('#id_kecamatan').hide();
-      v_kecamatan = 1;
-      v_desa = 0;
-      $('#id_desa').show();
-      $('#input-desa').attr("class", "form-group has-error");
-    } else {
-      v_kecamatan = 0;
-      v_desa = 0;
-      $('#id_kecamatan').show();
-      $('#input-kecamatan').attr("class", "form-group has-error");
-      $('#id_desa').show();
-      $('#input-desa').attr("class", "form-group has-error");
-    }
-  });
+  // ================== PROVINSI ==================
+$(document).on('change','#provinsi', function () {
+    const id_provinsi = this.value;
 
-  // untuk validasi nama desa
-  var v_desa = 0;
-  $('#input-desa').on('change', function () {
-    desa = $('#desa').val();
-    if (desa != "") {
-      $('#input-desa').attr("class", "form-group has-success");
-      $('#id_desa').hide();
-      v_desa = 1;
+    // VALIDASI + WARNA
+    if (id_provinsi !== "") {
+        $('#input-provinsi').removeClass('has-error').addClass('has-success');
+        $('#id_provinsi').hide();
+        v_provinsi = 1;
     } else {
-      v_desa = 0;
-      $('#id_desa').show();
-      $('#input-desa').attr("class", "form-group has-error");
+        $('#input-provinsi').removeClass('has-success').addClass('has-error');
+        $('#id_provinsi').show();
+        v_provinsi = 0;
     }
-  });
 
-  // untuk validasi pola tanam
-  var v_pola_tanam = 1;
-  $('#input-pola-tanam').on('change', function () {
-    pola_tanam = $('#pola_tanam').val();
-    if (pola_tanam != "") {
-      $('#input-pola-tanam').attr("class", "form-group has-success");
-      v_pola_tanam = 1;
+    // RESET DROPDOWN BAWAHNYA
+    v_kabupaten = 0; v_kecamatan = 0; v_desa = 0;
+    $('#input-kabupaten').removeClass('has-success').addClass('has-error'); $('#id_kabupaten').show();
+    $('#input-kecamatan').removeClass('has-success').addClass('has-error'); $('#id_kecamatan').show();
+    $('#input-desa').removeClass('has-success').addClass('has-error'); $('#id_desa').show();
+
+    $('#kabupaten').html('<option value="">=== Silahkan Pilih ===</option>');
+    $('#kecamatan').html('<option value="">=== Silahkan Pilih ===</option>');
+    $('#desa').html('<option value="">=== Silahkan Pilih ===</option>');
+
+    if (id_provinsi === "") return;
+
+    // AJAX LOAD KABUPATEN
+    $(".loading").show();
+    $.ajax({
+        type: 'POST',
+        url: '{{ route("user.json_kabupaten2") }}',
+        data: {
+            _token: $('input[name=_token]').val(),
+            id: id_provinsi
+        },
+        success: function (data) {
+            if (data.length > 0) {
+                data.forEach(v => {
+                    $('#kabupaten').append(`<option value="${v.id}">${v.nama_kabupaten}</option>`);
+                });
+            } else {
+                $('#kabupaten').html('<option value="">Data kosong</option>');
+            }
+        },
+        error: function (xhr) {
+        console.error('STATUS:', xhr.status);
+        console.error('RESPONSE:', xhr.responseText);
+    },
+        complete: function () { $(".loading").hide(); }
+    });
+});
+
+
+// ================== KABUPATEN ==================
+$(document).on('change', '#kabupaten', function () {
+    const id_kabupaten = this.value;
+
+    if (id_kabupaten !== "") {
+        $('#input-kabupaten').removeClass('has-error').addClass('has-success');
+        $('#id_kabupaten').hide();
+        v_kabupaten = 1;
     } else {
-      v_pola_tanam = 1;
-      $('#input-pola-tanam').attr("class", "form-group has-success");
+        $('#input-kabupaten').removeClass('has-success').addClass('has-error');
+        $('#id_kabupaten').show();
+        v_kabupaten = 0;
     }
-  });
+
+    // reset bawahnya
+    v_kecamatan = 0; v_desa = 0;
+    $('#input-kecamatan').removeClass('has-success').addClass('has-error'); $('#id_kecamatan').show();
+    $('#input-desa').removeClass('has-success').addClass('has-error'); $('#id_desa').show();
+    $('#kecamatan').html('<option value="">=== Silahkan Pilih ===</option>');
+    $('#desa').html('<option value="">=== Silahkan Pilih ===</option>');
+
+    if (id_kabupaten === "") return;
+
+    $(".loading").show();
+    $.ajax({
+        type: 'POST',
+        url: '{{ route("user.json_kecamatan2") }}',
+        data: {
+            _token: $('input[name=_token]').val(),
+            id: id_kabupaten
+        },
+        success: function (data) {
+            if (data.length > 0) {
+                data.forEach(v => {
+                    $('#kecamatan').append(`<option value="${v.id}">${v.nama_kecamatan}</option>`);
+                });
+            } else {
+                $('#kecamatan').html('<option value="">Data kosong</option>');
+            }
+        },
+        error: function (xhr) {
+        console.error('STATUS:', xhr.status);
+        console.error('RESPONSE:', xhr.responseText);
+    },
+        complete: function () { $(".loading").hide(); }
+    });
+});
+
+
+// ================== KECAMATAN ==================
+$(document).on('change','#kecamatan', function () {
+    const id_kecamatan = this.value;
+
+    if (id_kecamatan !== "") {
+        $('#input-kecamatan').removeClass('has-error').addClass('has-success');
+        $('#id_kecamatan').hide();
+        v_kecamatan = 1;
+    } else {
+        $('#input-kecamatan').removeClass('has-success').addClass('has-error');
+        $('#id_kecamatan').show();
+        v_kecamatan = 0;
+    }
+
+    // reset desa
+    v_desa = 0;
+    $('#input-desa').removeClass('has-success').addClass('has-error');
+    $('#id_desa').show();
+    $('#desa').html('<option value="">=== Silahkan Pilih ===</option>');
+
+    if (id_kecamatan === "") return;
+
+    $(".loading").show();
+    $.ajax({
+        type: 'POST',
+        url: '{{ route("user.json_desa2") }}',
+        data: {
+            _token: $('input[name=_token]').val(), // konsisten pakai ini aja
+            id: id_kecamatan
+        },
+        success: function (data) {
+            if (data.length > 0) {
+                data.forEach(v => {
+                    $('#desa').append(`<option value="${v.id}">${v.nama_desa}</option>`);
+                });
+            } else {
+                $('#desa').html('<option value="">Data kosong</option>');
+            }
+        },
+        error: function (xhr) {
+        console.error('STATUS:', xhr.status);
+        console.error('RESPONSE:', xhr.responseText);
+    },
+        complete: function () { $(".loading").hide(); }
+    });
+});
 
   // untuk validasi nama titik ikat
   var v_titik_ikat = 0;
@@ -827,93 +881,11 @@
   });
 
   // event
-  $('#provinsi').on('change', function (e) {
-		$(".loading").show();
-    var id_provinsi = e.target.value;
-    $.ajax({
-      type: 'post',
-      url: '{{route("user.json_kabupaten2")}}',
-      data: {
-        '_token': $('input[name=_token]').val(),
-        'id': id_provinsi,
-      },
-      success: function (data) {
-        if (data.length > 0) {
-          $('#kabupaten').empty();
-          $('#kabupaten').append('<option value="" disable="true" selected="true">=== Silahkan Pilih === </option>');
-          $('#kecamatan').empty();
-          $('#kecamatan').append('<option value="" disable="true" selected="true">=== Silahkan Pilih === </option>');
-          $('#desa').empty();
-          $('#desa').append('<option value="" disable="true" selected="true">=== Silahkan Pilih === </option>');
-          $.each(data, function (key, value) {
-            $('#kabupaten').append('<option value="' + value['id'] + '">' + value['nama_kabupaten'] + '</option>');
-          });
-        } else {
-          $('#kabupaten').empty();
-          $('#kabupaten').append('<option value="" disable="true" selected="true">Data kosong</option>');
-          $('#kecamatan').empty();
-          $('#kecamatan').append('<option value="" disable="true" selected="true">Data kosong</option>');
-          $('#desa').empty();
-          $('#desa').append('<option value="" disable="true" selected="true">Data kosong</option>');
-        }
-				$(".loading").hide();
-      }
-    });
-  });
-  $('#kabupaten').on('change', function (e) {
-		$(".loading").show();
-    var id = e.target.value;
-    $.ajax({
-      type: 'post',
-      url: '{{route("user.json_kecamatan2")}}',
-      data: {
-        '_token': $('input[name=_token]').val(),
-        'id': id,
-      },
-      success: function (data) {
-        if (data.length > 0) {
-          $('#kecamatan').empty();
-          $('#kecamatan').append('<option value="" disable="true" selected="true">=== Silahkan Pilih === </option>');
-          $('#desa').empty();
-          $('#desa').append('<option value="" disable="true" selected="true">=== Silahkan Pilih === </option>');
-          $.each(data, function (key, value) {
-            $('#kecamatan').append('<option value="' + value['id'] + '">' + value['nama_kecamatan'] + '</option>');
-          });
-        } else {
-          $('#kecamatan').empty();
-          $('#kecamatan').append('<option value="" disable="true" selected="true">Data kosong</option>');
-          $('#desa').empty();
-          $('#desa').append('<option value="" disable="true" selected="true">Data kosong</option>');
-        }
-				$(".loading").hide();
-      }
-    });
-  });
-  $('#kecamatan').on('change', function (e) {
-		$(".loading").show();
-    var id = e.target.value;
-    $.ajax({
-      type: 'post',
-      url: '{{route("user.json_desa2")}}',
-      data: {
-        '_token': $('input[name=_token]').val(),
-        'id': id,
-      },
-      success: function (data) {
-        if (data.length > 0) {
-          $('#desa').empty();
-          $('#desa').append('<option value="" disable="true" selected="true">=== Silahkan Pilih === </option>');
-          $.each(data, function (key, value) {
-            $('#desa').append('<option value="' + value['id'] + '">' + value['nama_desa'] + '</option>');
-          });
-        } else {
-          $('#desa').empty();
-          $('#desa').append('<option value="" disable="true" selected="true">Data kosong</option>');
-        }
-				$(".loading").hide();
-      }
-    });
-  });
+
+
+
+
+
 
   // untuk validasi lintang ikat
   var v_lintang_ikat = 1;
@@ -959,26 +931,66 @@
 		}
   });
 
-  $('#btnljt').click(function (e) {
-    validate = v_pemilik + v_jenis + v_fungsi + v_provinsi + v_kabupaten + v_kecamatan + v_desa + v_lintang_klaster + v_bujur_klaster + v_altitude + v_luas_hutan + v_tahun_tanam + v_usia + v_pengelola + v_keterangan_pengelola + v_panjang + v_lebar + v_pola_tanam + v_jenis_tanaman;
-    // validate=19;
-    if (validate == 19) {
-      $('#id_lanjut').hide();
-      e.preventDefault();
-      $('#tabs6').attr("href", "#tab_6");
-      $('#tabtambah a[href="#tab_6"]').tab('show');
-      $('#tabs6').removeAttr("href");
-      $('#tab5').attr("class", "disabled");
-      $('#tabs5').removeAttr("href");
+  function isValid(v) {
+    return v === 1;
+}
+
+ $('#btnljt').click(function (e) {
+    e.preventDefault();
+
+    const wajib = [
+        v_pemilik,
+        v_jenis,
+        v_fungsi,
+        v_provinsi,
+        v_kabupaten,
+        v_kecamatan,
+        v_desa,
+        v_lintang_klaster,
+        v_bujur_klaster
+    ];
+
+    const semuaValid = wajib.every(isValid);
+
+    if (semuaValid) {
+        $('#id_lanjut').hide();
+
+        $('#tabs6').attr("href", "#tab_6");
+        $('#tabtambah a[href="#tab_6"]').tab('show');
+        $('#tabs6').removeAttr("href");
+        $('#tab5').addClass("disabled");
+        $('#tabs5').removeAttr("href");
+
     } else {
-      $('#id_lanjut').show();
+        $('#id_lanjut').show();
     }
-  });
+});
+
   $('#btnkmbli').click(function (e) {
     e.preventDefault();
     $('#tabs5').attr("href", "#tab_5");
     $('#tabtambah a[href="#tab_5"]').tab('show');
     $('#tabs5').removeAttr("href");
   });
-  });
+$('#formsatu').on('keydown', function (e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        return false;
+    }
+});
+
+// ================================
+// SUBMIT AMAN (HANYA VIA TOMBOL)
+// ================================
+$('#submit').on('click', function (e) {
+    e.preventDefault();
+
+    $(this).prop('disabled', true).text('Sedang menyimpan...');
+
+    $('#formsatu')
+        .data('allow-submit', true)
+        .attr('action', '{{ route("user.insert_klaster") }}')
+        .submit();
+});
+});
 </script>

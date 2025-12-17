@@ -61,7 +61,7 @@
 @endsection
 
 <script src="{{asset('Admin/modal_ajax.min.js')}}"></script>
-<script src="{{asset('Admin/bower_components/jquery/dist/jquery.min.js')}}"></script>
+{{-- <script src="{{ asset('Admin/bower_components/jquery/dist/jquery.min.js') }}"></script> --}}
 
 <script type="text/javascript">
 $(document).ready(function(){

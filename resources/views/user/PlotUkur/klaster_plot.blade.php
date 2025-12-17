@@ -14,7 +14,7 @@
           <h3 class="box-title">Data Klaster Plot {{$data_nama_klaster->kategori}}</h3>
 
           @if($ijin==Auth::user()->id)
-          <button type="button" class=" btn btn-primary btn-xs pull-right custom_button" data-toggle="modal" data-target="#tambah_klaster_plot">
+          <button type="button" class=" btn btn-primary btn-xs pull-right custom_button" data-toggle="modal" data-target="#tambah_klaster_plot" data-backdrop="static" data-keyboard="false">
             <i class="fa fa-plus"></i> Tambah Klaster Plot</button>
           @endif
         </div>
@@ -76,7 +76,6 @@
     <!-- /.col -->
   </div>
   <!-- /.row -->
-<script src="{{asset('Admin/bower_components/jquery/dist/jquery.min.js')}}"></script>
 @include('user.include.data_klaster.modal-tambah_klaster_plot')
 @include('user.include.data_klaster.modal-edit_klaster_plot')
 @include('user.include.data_klaster.modal-delete_klaster_plot')

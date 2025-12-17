@@ -6,12 +6,23 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class LoginController extends Controller
 {
     public function showLoginForm()
+{
+    if (Auth::check()) {
+        return redirect('/home');
+    }
+
+    return view('auth.login');
+}
+
+    // wajib agar Laravel login dengan username
+    public function username()
     {
-        return view('auth.login');
+        return 'username';
     }
 
     public function login(Request $request)
@@ -21,25 +32,30 @@ class LoginController extends Controller
             'password' => 'required',
         ]);
 
-        // 🔥 gunakan guard web secara explisit (WAJIB)
         $credentials = [
             'username' => $request->username,
             'password' => $request->password
         ];
 
-        if (Auth::guard('web')->attempt($credentials, true)) {
+        // remember_token ON
+        if (Auth::attempt($credentials, true)) {
 
-            // 🔥 pastikan session benar terbuat
-            Auth::guard('web')->login(Auth::guard('web')->user());
+            // WAJIB regenerate session
+            $request->session()->regenerate();
 
-            // catat login
-            DB::table('login')->insert([
-                'id_user' => Auth::guard('web')->id(),
-                'time_login' => DB::raw('NOW()')
+            // UPDATE last_login di tabel users
+            DB::table('users')->where('id', Auth::id())->update([
+                'last_login' => now()
             ]);
 
-            // redirect sesuai role
-            return match (Auth::guard('web')->user()->id_role) {
+            // CATAT ke tabel login
+            DB::table('login')->insert([
+                'id_user' => Auth::id(),
+                'time_login' => now()
+            ]);
+
+            // redirect berdasarkan role
+            return match (Auth::user()->id_role) {
                 1 => redirect('/admin/home'),
                 2 => redirect('/user/home'),
                 3 => redirect('/auditor/home'),
@@ -52,9 +68,15 @@ class LoginController extends Controller
 
     public function logout()
     {
-        $user = Auth::guard('web')->user();
+        $user = Auth::user();
 
         if ($user) {
+            // UPDATE logout_time di tabel users
+            DB::table('users')->where('id', $user->id)->update([
+                'logout_time' => now()
+            ]);
+
+            // update tabel login
             $id_login = DB::table('login')
                 ->select('id_login')
                 ->where('id_user', $user->id)
@@ -63,12 +85,14 @@ class LoginController extends Controller
 
             if ($id_login) {
                 DB::table('login')->where('id_login', $id_login->id_login)
-                    ->update(['time_logout' => DB::raw('NOW()')]);
+                    ->update(['time_logout' => now()]);
             }
         }
 
         Auth::guard('web')->logout();
+
+        request()->session()->invalidate();
+        request()->session()->regenerateToken();
         return redirect('/login');
     }
 }
-

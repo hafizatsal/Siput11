@@ -64,7 +64,7 @@
       </div>
     <div class="modal-footer">
       <button type="button" id="btnkmbli" class="btn btn-default pull-left" data-dismiss="modal">Kembali</button>
-      <input type="submit" disabled id="submit" class="btn btn-primary pull-right"  value="Simpan"/>
+      <input type="submit" id="submit" class="btn btn-primary pull-right" value="Simpan"/>
     </div>
       </form>
   </div>

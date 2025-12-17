@@ -45,16 +45,12 @@ Route::middleware(['auth'])->get('/home', function(){
    IMPORT ROUTE PEMISAH (WAJIB ADA)
    ============================================================ */
 
-Route::middleware(['web','auth'])->group(function(){
+/* ============================================================
+   ROUTE USER / ADMIN / AUDITOR (JANGAN DIBUNGKUS MIDDLEWARE)
+   ============================================================ */
 
-    // ROUTE USER SIPUT LAMA
-    require __DIR__.'/user.php';
-
-    // ROUTE ADMIN SIPUT LAMA
-    require __DIR__.'/admin.php';
-
-    // ROUTE AUDITOR SIPUT LAMA
-    require __DIR__.'/auditor.php';
-});
+require __DIR__.'/user.php';
+require __DIR__.'/admin.php';
+require __DIR__.'/auditor.php';
 
 

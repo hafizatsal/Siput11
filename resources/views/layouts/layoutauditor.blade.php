@@ -261,11 +261,19 @@ div.desc {
               <!-- Menu Footer-->
               <li class="user-footer">
                 <div class="pull-left">
-                  <a href="{{route('profile_auditor')}}" class="btn btn-default btn-flat">Profile</a>
+                  <a href="{{route('auditor.profile')}}" class="btn btn-default btn-flat">Profile</a>
                 </div>
                 <div class="pull-right">
-                  <a href="{{route('logout')}}" class="btn btn-default btn-flat">Log out</a>
-                </div>
+                                        <a href="#" class="btn btn-default btn-flat"
+                                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                            Log out
+                                        </a>
+
+                                        <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                            style="display: none;">
+                                            @csrf
+                                        </form>
+                                    </div>
               </li>
             </ul>
           </li>
@@ -301,9 +309,9 @@ div.desc {
             </span>
           </a>
           <ul class="treeview-menu">
-            <li class="@yield('active_data_klaster')"><a href="{{route('data_klaster_auditor')}}"><i class="fa fa-circle-o"></i> Data Kategori Klaster</a></li>
-            <li class="@yield('active_klaster')"><a href="{{route('data_klaster_plot_auditor')}}"><i class="fa fa-circle-o"></i> Data Klaster Plot</a></li>
-            <li class="@yield('active_plot')"><a href="{{route('data_plot_auditor')}}"><i class="fa fa-circle-o"></i> Data Plot</a></li>
+            <li class="@yield('active_data_klaster')"><a href="{{route('auditor.data_klaster')}}"><i class="fa fa-circle-o"></i> Data Kategori Klaster</a></li>
+            <li class="@yield('active_klaster')"><a href="{{route('auditor.data_klaster_plot')}}"><i class="fa fa-circle-o"></i> Data Klaster Plot</a></li>
+            <li class="@yield('active_plot')"><a href="{{route('auditor.data_plot')}}"><i class="fa fa-circle-o"></i> Data Plot</a></li>
             <!-- <li class="@yield('active_garis_petak')"><a href="#"><i class="fa fa-book"></i> Garis Berpetak <small>(Coming soon)</small></a></li>
             <li><a href="#"><i class="fa fa-book"></i> Lingkaran <small>(Coming soon)</small></a></li> -->
           </ul>
@@ -317,10 +325,10 @@ div.desc {
             </span>
           </a>
           <ul class="treeview-menu">
-            <li class="@yield('active_produktivitas')"><a href="{{route('data_pengukuranp_auditor')}}"><i class="fa fa-circle-o"></i> Produktivitas</a></li>
-            <li class="@yield('active_vitalitas')"><a href="{{route('data_pengukuranv_auditor')}}"><i class="fa fa-circle-o"></i> Vitalitas</a></li>
-            <li class="@yield('active_biodiversitas')"><a href="{{route('data_pengukuranb_auditor')}}"><i class="fa fa-circle-o"></i> Biodiversitas</a></li>
-            <li class="@yield('active_kualitas_tapak')"><a href="{{route('data_pengukurank_auditor')}}"><i class="fa fa-circle-o"></i> Kualitas Tapak</a></li>
+            <li class="@yield('active_produktivitas')"><a href="{{route('auditor.data_pengukuranp')}}"><i class="fa fa-circle-o"></i> Produktivitas</a></li>
+            <li class="@yield('active_vitalitas')"><a href="{{route('auditor.data_pengukuranv')}}"><i class="fa fa-circle-o"></i> Vitalitas</a></li>
+            <li class="@yield('active_biodiversitas')"><a href="{{route('auditor.data_pengukuranb')}}"><i class="fa fa-circle-o"></i> Biodiversitas</a></li>
+            <li class="@yield('active_kualitas_tapak')"><a href="{{route('auditor.data_pengukurank')}}"><i class="fa fa-circle-o"></i> Kualitas Tapak</a></li>
           </ul>
         </li>
 
@@ -332,13 +340,13 @@ div.desc {
             </span>
           </a>
           <ul class="treeview-menu">
-            <li class="@yield('active_nilai_akhir')"><a href="{{route('/penilaian/klaster_auditor')}}"><i class="fa fa-circle-o"></i> Nilai Akhir KesHut</a></li>
+            <li class="@yield('active_nilai_akhir')"><a href="{{route('auditor.penilaian.klaster')}}"><i class="fa fa-circle-o"></i> Nilai Akhir KesHut</a></li>
           </ul>
         </li>
 
         @php($verifikasi = DB::table('kategori_klaster')->where('verif','=',0)->get())
         @php($jumlah_verif = count($verifikasi))
-        <li class="@yield('active_verif')"><a href="{{route('verifikasi')}}"><i class="fa fa-check-circle"></i> <span>Verifikasi Data</span>
+        <li class="@yield('active_verif')"><a href="{{route('auditor.verifikasi')}}"><i class="fa fa-check-circle"></i> <span>Verifikasi Data</span>
             @if($jumlah_verif>0)
             <span class="pull-right-container">
                 <small class="label pull-right bg-red">{{$jumlah_verif}} data baru</small>

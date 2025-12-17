@@ -11,25 +11,13 @@ return [
         'web' => [
             'driver' => 'session',
             'provider' => 'users',
-            'redirect' => '/login',
-        ],
-
-        // Tambahkan sesuai SIPUT lama
-        'admin' => [
-            'driver' => 'session',
-            'provider' => 'users', // Karena semua user tetap di tabel users
-        ],
-
-        'auditor' => [
-            'driver' => 'session',
-            'provider' => 'users',
         ],
     ],
 
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => App\Models\User::class, // tetap model user Laravel baru
+            'model' => App\Models\User::class,
         ],
     ],
 

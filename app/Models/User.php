@@ -43,8 +43,6 @@ class User extends Authenticatable
     // }
 
     // 🔹 Fungsi yang benar untuk login pakai username:
-    public function username()
-    {
-        return 'username';
-    }
+   
+
 }
