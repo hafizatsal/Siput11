@@ -19,7 +19,7 @@
 							<div class="tab-content">
 								<!-- tab 3 -->
 								<div class="tab-pane active" id="tab_3">
-									<form id="formedit" class="" action="{{route('user.data_klaster.edit')}}" method="get" onsubmit="document.getElementById('submit2').disabled=true;
+									<form id="formedit" class="" action="{{route('user.edit_klaster')}}" method="post" onsubmit="document.getElementById('submit2').disabled=true;
                           document.getElementById('submit2').value='Sedang memperbarui...';">{{csrf_field()}}
 										<div id="klaster2" class="form-group">
 											<input type="hidden" class="form-control" name="id_klaster_plot2" id="id_klaster_plot2" value="">
@@ -30,7 +30,7 @@
 											<div class="col-md-6">
 												<div id="input-kode-klaster-plot2" class="form-group">
 													<label>Kode Klaster Plot *</label>
-													<input type="text" name="kode_klaster_plot2" id="kode_klaster_plot2" class="form-control" placeholder="Contoh : CL1,CL2,CL3,dst">
+													<input type="text" name="kode_klaster_plot2" id="kode_klaster_plot2" class="form-control" placeholder="Misal: 1 atau CL1">
 													<label hidden id="id_kode_klaster_plot2" class="control-label"><i>Kode klaster plot salah! (3-10 huruf).</i>
 													</label>
 												</div>
@@ -370,7 +370,6 @@
 @endsection
 
 @section('script_table')
-<script>
   $('[data-mask2]').inputmask()
   $(document).ready(function () {
   	var validate = 0;
@@ -731,8 +730,20 @@
 
   	// untuk validasi kode klaster plot
   	var v_kode_klaster_plot2 = 1;
-  	$('#input-kode-klaster-plot2').on('input', function () {
-  		kode_klaster_plot2 = $('#kode_klaster_plot2').val();
+    function normalizeKodeKlaster2() {
+      let val = $('#kode_klaster_plot2').val().trim().toUpperCase().replace(/\s+/g, '');
+      if (val && /^\d+$/.test(val)) {
+        val = 'CL' + val;
+      }
+      if (val && !/^CL/.test(val)) {
+        val = 'CL' + val;
+      }
+      $('#kode_klaster_plot2').val(val);
+      return val;
+    }
+
+  	$('#input-kode-klaster-plot2').on('blur keyup', function () {
+  		kode_klaster_plot2 = normalizeKodeKlaster2();
   		var valid_kode_klaster = /^[a-zA-Z][a-zA-Z0-9]{2,9}$/; //untuk validasi kode klaster
   		if (kode_klaster_plot2.match(valid_kode_klaster)) {
   			$('#input-kode-klaster-plot2').attr("class", "form-group has-success");
@@ -1119,5 +1130,4 @@
   	});
 
   });
-</script>
 @endsection

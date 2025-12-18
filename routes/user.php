@@ -66,7 +66,7 @@ Route::middleware(['auth', 'user'])
         Route::get('/plot_ukur/klaster/detail/{id}', [KlasterController::class, 'detail_klaster_plot'])->name('user.detail_klaster');
         Route::get('/plot_ukur/detail_klaster', [KlasterController::class, 'detail_klaster_plots'])->name('user.detail_klaster_all');
         Route::post('/plot_ukur/klaster/data_klaster/insert', [KlasterController::class, 'insert_klaster_plot'])->name('user.insert_klaster');
-        Route::get('/plot_ukur/klaster/data_klaster/edit', [KlasterController::class, 'update_klaster_plot'])->name('user.edit_klaster');
+        Route::post('/plot_ukur/klaster/data_klaster/edit', [KlasterController::class, 'update_klaster_plot'])->name('user.edit_klaster');
         Route::get('/plot_ukur/klaster/data_klaster/hapus', [KlasterController::class, 'hapus_klaster_plot'])->name('user.hapus_klaster');
         Route::get('/plot_ukur/editPlot', [KlasterController::class, 'editPlot'])->name('user.editPlot');
 

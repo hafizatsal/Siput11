@@ -1,14 +1,14 @@
 <?php
 
 namespace App\Http\Controllers\user;
-
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
 use App\Exceptions\CustomException;
 use Illuminate\Database\QueryException;
+use App\Http\Controllers\Controller;
 use GMaps;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class KlasterController extends Controller
 {
@@ -30,6 +30,7 @@ class KlasterController extends Controller
 
      public function insert_klaster_plot(Request $req)
      {
+
        $req->validate([
            'id_tambah_data_klaster'=> 'required|integer',
            'altitude'=>'nullable|numeric|max:1000',
@@ -91,80 +92,53 @@ class KlasterController extends Controller
        //------------------------------------------------------------------------
 
        if($koor_bujur==""){
-         $koor_bujur = "000 ᴼ 00 ’ 00.00 ”";
+         $koor_bujur = "0 0' 0.00\"";
        }
        if($koor_lintang==""){
-         $koor_lintang = "00 ᴼ 00 ’ 00.00 ”";
+         $koor_lintang = "0 0' 0.00\"";
        }
 
        if($koor_bujur_klaster==""){
-         $koor_bujur_klaster = "000 ᴼ 00 ’ 00.00 ”";
+         $koor_bujur_klaster = "0 0' 0.00\"";
        }
        if($koor_lintang_klaster==""){
-         $koor_lintang_klaster = "00 ᴼ 00 ’ 00.00 ”";
+         $koor_lintang_klaster = "0 0' 0.00\"";
        }
 
-       $pattern = '/_/i';
-       if(preg_match($pattern,$koor_bujur) || preg_match($pattern,$koor_lintang) ){
-         session()->flash('delete', 'Koordinat yang dimasukkan salah.');
-         return back();
-       }
+       // hilangkan placeholder underscore dari input mask agar tidak memicu error
+       $koor_bujur = str_replace('_', '', $koor_bujur);
+       $koor_lintang = str_replace('_', '', $koor_lintang);
+       $koor_bujur_klaster = str_replace('_', '', $koor_bujur_klaster);
+       $koor_lintang_klaster = str_replace('_', '', $koor_lintang_klaster);
 
-       // klaster
-       $pattern_klaster = '/_/i';
-       if(preg_match($pattern_klaster,$koor_bujur_klaster) || preg_match($pattern_klaster,$koor_lintang_klaster) ){
-         session()->flash('delete', 'Koordinat klaster yang dimasukkan salah.');
-         return back();
-       }
+       // normalisasi koordinat: buang simbol, ambil tiga angka (deg, min, sec) dan terapkan tanda LS/BB
+       $normalizeCoord = function ($val, $hemi) {
+         if ($val === null) {
+           $val = '';
+         }
+         // ambil semua angka (boleh minus / desimal)
+         preg_match_all('/-?\\d+(?:\\.\\d+)?/', $val, $m);
+         $nums = $m[0] ?? [];
+         $deg = isset($nums[0]) ? (float) $nums[0] : 0;
+         $min = isset($nums[1]) ? (float) $nums[1] : 0;
+         $sec = isset($nums[2]) ? (float) $nums[2] : 0;
+         $sign = ($hemi === 'LS' || $hemi === 'BB') ? -1 : 1;
+         $deg = $sign * abs($deg);
+         return trim(sprintf('%d %02d %05.2f', (int)$deg, (int)$min, $sec));
+       };
+
+       $koor_bujur = $normalizeCoord($koor_bujur, $ket_bujur, false);
+       $koor_lintang = $normalizeCoord($koor_lintang, $ket_lintang, true);
+       $koor_bujur_klaster = $normalizeCoord($koor_bujur_klaster, $ket_bujur_klaster, false);
+       $koor_lintang_klaster = $normalizeCoord($koor_lintang_klaster, $ket_lintang_klaster, true);
 
 
        //
-       // LINTANG
-       $ls_splitName = explode(' ᴼ', $koor_lintang, 2);
-       $ls_splitName2= explode(' ’', $ls_splitName[1], 2);
-       $ls_splitName3= explode(' ”', $ls_splitName2[1], 2);
-       if($ket_lintang=='LS'){
-         $koor_ls_ful='-'.$ls_splitName[0].$ls_splitName2[0].$ls_splitName3[0];
-       }
-       else{
-         $koor_ls_ful=$ls_splitName[0].$ls_splitName2[0].$ls_splitName3[0];
-       }
-
-       //BUJUR
-       $splitName = explode(' ᴼ', $koor_bujur, 2);
-       $splitName2= explode(' ’', $splitName[1], 2);
-       $splitName3= explode(' ”', $splitName2[1], 2);
-       if($ket_bujur=='BT'){
-         $koor_bt_ful=$splitName[0].$splitName2[0].$splitName3[0];
-       }
-       else{
-         $koor_bt_ful='-'.$splitName[0].$splitName2[0].$splitName3[0];
-       }
-       //
-
-       // Klaster
-       // LINTANG
-       $ls_splitName_klaster = explode(' ᴼ', $koor_lintang_klaster, 2);
-       $ls_splitName_klaster2= explode(' ’', $ls_splitName_klaster[1], 2);
-       $ls_splitName_klaster3= explode(' ”', $ls_splitName_klaster2[1], 2);
-       if($ket_lintang_klaster=='LS'){
-         $koor_ls_ful_klaster='-'.$ls_splitName_klaster[0].$ls_splitName_klaster2[0].$ls_splitName_klaster3[0];
-       }
-       else{
-         $koor_ls_ful_klaster=$ls_splitName_klaster[0].$ls_splitName_klaster2[0].$ls_splitName_klaster3[0];
-       }
-
-       //BUJUR
-       $splitName_klaster = explode(' ᴼ', $koor_bujur_klaster, 2);
-       $splitName_klaster2= explode(' ’', $splitName_klaster[1], 2);
-       $splitName_klaster3= explode(' ”', $splitName_klaster2[1], 2);
-       if($ket_bujur_klaster=='BT'){
-         $koor_bt_ful_klaster=$splitName_klaster[0].$splitName_klaster2[0].$splitName_klaster3[0];
-       }
-       else{
-         $koor_bt_ful_klaster='-'.$splitName_klaster[0].$splitName_klaster2[0].$splitName_klaster3[0];
-       }
-       //
+              // Koordinat: simpan mentah sesuai input (hindari error parsing)
+       $koor_ls_ful = $koor_lintang;
+       $koor_bt_ful = $koor_bujur;
+       $koor_ls_ful_klaster = $koor_lintang_klaster;
+       $koor_bt_ful_klaster = $koor_bujur_klaster;
 
        // menyimpan data klaster_plot ke dalam array data
        $data = array(
@@ -193,12 +167,11 @@ class KlasterController extends Controller
        );
 
        try{
-         DB::table('tbl_klaster_plot')->insert($data);
-         $klaster = DB::table('tbl_klaster_plot')
-                       ->select(DB::raw('MAX(id_klaster_plot) AS id_klaster'))
-                       ->where('input_by','=',Auth::user()->id)
-                       ->first();
-         $id_klaster = $klaster->id_klaster;
+         // Simpan semua data dalam satu transaksi supaya pasti tersimpan utuh
+         DB::beginTransaction();
+
+         // simpan klaster dan ambil id yang baru
+         $id_klaster = DB::table('tbl_klaster_plot')->insertGetId($data);
 
          // menyimpan data lokasi ke dalam array data
          $data_lokasi = array(
@@ -250,68 +223,62 @@ class KlasterController extends Controller
            // 'koordinat_BT' => $bt,
            // 'kode_foto' => $foto,
          );
-         // menambah data nilai_tertimbang ke dalam array data
-         // $nilai_tertimbang = array(
-         //   'id_klaster' => $id_klaster,
-         // );
 
 
          // menambahkan data pada tbl_klaster_plot, lokasi, hak_milik_jenis_fungsi_hutan,
          // tbl_plot, dan nilai_tertimbang_copy.
-         DB::beginTransaction(); //fungsi untuk menampung data terlebih dahulu
          DB::table('lokasi')->insert($data_lokasi);
          DB::table('hak_milik_jenis_fungsi_hutan')->insert($data_milik);
          DB::table('tbl_plot')->insert($data_plot1);
          DB::table('tbl_plot')->insert($data_plot2);
-         DB::table('tbl_plot')->insert($data_plot3);
-         DB::table('tbl_plot')->insert($data_plot4);
-         DB::commit(); // setelah semua tereksekusi baru data disimpan ke dalam Database
-         // jika terdapat error, maka semua data tidak akan disimpan ke dalam database
-         $tahun_pengukuran = $req->input('tahun_pengukuran');
+       DB::table('tbl_plot')->insert($data_plot3);
+       DB::table('tbl_plot')->insert($data_plot4);
+       DB::commit(); // setelah semua tereksekusi baru data disimpan ke dalam Database
+       // jika terdapat error, maka semua data tidak akan disimpan ke dalam database
+       $tahun_pengukuran = $req->input('tahun_pengukuran');
          $pengukuran_ke = $req->input('pengukuran_ke');
          $nama_pengukur = $req->input('nama_pengukur');
          $id_plot=DB::table('tbl_plot')
          ->where('id_klaster_plot','=',$id_klaster)->get();
-
          $data_pengukuran1= array(
            'pengukuran_ke' => $pengukuran_ke,
-           'id_data_klaster' => $id_data_klaster,
            'id_plot' => $id_plot[0]->id_plot,
+           'id_data_klaster' => $id_data_klaster,
            'tahun_pengukuran' => $tahun_pengukuran,
            'nama_pengukur' => $nama_pengukur,
          );
          $data_pengukuran2= array(
            'pengukuran_ke' => $pengukuran_ke,
-           'id_data_klaster' => $id_data_klaster,
            'id_plot' => $id_plot[1]->id_plot,
+           'id_data_klaster' => $id_data_klaster,
            'tahun_pengukuran' => $tahun_pengukuran,
            'nama_pengukur' => $nama_pengukur,
          );
          $data_pengukuran3= array(
            'pengukuran_ke' => $pengukuran_ke,
-           'id_data_klaster' => $id_data_klaster,
            'id_plot' => $id_plot[2]->id_plot,
+           'id_data_klaster' => $id_data_klaster,
            'tahun_pengukuran' => $tahun_pengukuran,
            'nama_pengukur' => $nama_pengukur,
          );
          $data_pengukuran4= array(
            'pengukuran_ke' => $pengukuran_ke,
-           'id_data_klaster' => $id_data_klaster,
            'id_plot' => $id_plot[3]->id_plot,
+           'id_data_klaster' => $id_data_klaster,
            'tahun_pengukuran' => $tahun_pengukuran,
            'nama_pengukur' => $nama_pengukur,
          );
-
          DB::table('pengukuran_master')->insert($data_pengukuran1);
          DB::table('pengukuran_master')->insert($data_pengukuran2);
-         DB::table('pengukuran_master')->insert($data_pengukuran3);
-         DB::table('pengukuran_master')->insert($data_pengukuran4);
-         session()->flash('insert', 'Data Klaster Plot berhasil ditambah.');
-       }
-       catch(\Illuminate\Database\QueryException $e){
-         throw new CustomException($e->getMessage());
-       }
-       return back(); //kembali ke halaman data klaster plot
+       DB::table('pengukuran_master')->insert($data_pengukuran3);
+       DB::table('pengukuran_master')->insert($data_pengukuran4);
+       session()->flash('insert', 'Data Klaster Plot berhasil ditambah.');
+      }
+      catch(\Illuminate\Database\QueryException $e){
+        DB::rollBack();
+        throw new CustomException($e->getMessage());
+      }
+      return back(); //kembali ke halaman data klaster plot
      }
 
      // fungsi yang digunakan untuk update data pengukuran
@@ -374,17 +341,17 @@ class KlasterController extends Controller
        //------------------------------------------------------------------------
 
        if($koord_bujur==""){
-         $koord_bujur = "000 ᴼ 00 ’ 00.00 ”";
+         $koord_bujur = "000 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â´ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¼ 00 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ 00.00 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â";
        }
        if($koord_lintang==""){
-         $koord_lintang = "00 ᴼ 00 ’ 00.00 ”";
+         $koord_lintang = "00 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â´ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¼ 00 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ 00.00 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â";
        }
 
        if($koord_bujur_klaster==""){
-         $koord_bujur_klaster = "000 ᴼ 00 ’ 00.00 ”";
+         $koord_bujur_klaster = "000 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â´ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¼ 00 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ 00.00 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â";
        }
        if($koord_lintang_klaster==""){
-         $koord_lintang_klaster = "00 ᴼ 00 ’ 00.00 ”";
+         $koord_lintang_klaster = "00 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â´ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¼ 00 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ 00.00 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â";
        }
        $pattern = '/_/i';
        if(preg_match($pattern,$koord_bujur) || preg_match($pattern,$koord_lintang) ){
@@ -399,9 +366,9 @@ class KlasterController extends Controller
        }
 
        //
-       $splitName = explode(' ᴼ', $koord_bujur, 2);
-       $splitName2= explode(' ’', $splitName[1], 2);
-       $splitName3= explode(' ”', $splitName2[1], 2);
+       $splitName = explode(' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â´ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¼', $koord_bujur, 2);
+       $splitName2= explode(' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢', $splitName[1], 2);
+       $splitName3= explode(' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â', $splitName2[1], 2);
 
        if($ket_bujur=='BT'){
          $koor_bt_ful=$splitName[0].$splitName2[0].$splitName3[0];
@@ -411,9 +378,9 @@ class KlasterController extends Controller
        }
 
 
-       $ls_splitName = explode(' ᴼ', $koord_lintang, 2);
-       $ls_splitName2= explode(' ’', $ls_splitName[1], 2);
-       $ls_splitName3= explode(' ”', $ls_splitName2[1], 2);
+       $ls_splitName = explode(' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â´ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¼', $koord_lintang, 2);
+       $ls_splitName2= explode(' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢', $ls_splitName[1], 2);
+       $ls_splitName3= explode(' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â', $ls_splitName2[1], 2);
 
        if($ket_lintang=='LS'){
          $koor_ls_ful='-'.$ls_splitName[0].$ls_splitName2[0].$ls_splitName3[0];
@@ -425,9 +392,9 @@ class KlasterController extends Controller
        //
 
        // koor klaster
-       $splitName_klaster = explode(' ᴼ', $koord_bujur_klaster, 2);
-       $splitName_klaster2= explode(' ’', $splitName_klaster[1], 2);
-       $splitName_klaster3= explode(' ”', $splitName_klaster2[1], 2);
+       $splitName_klaster = explode(' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â´ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¼', $koord_bujur_klaster, 2);
+       $splitName_klaster2= explode(' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢', $splitName_klaster[1], 2);
+       $splitName_klaster3= explode(' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â', $splitName_klaster2[1], 2);
 
        if($ket_bujur_klaster=='BT'){
          $koor_bt_ful_klaster=$splitName_klaster[0].$splitName_klaster2[0].$splitName_klaster3[0];
@@ -437,9 +404,9 @@ class KlasterController extends Controller
        }
 
 
-       $ls_splitName_klaster = explode(' ᴼ', $koord_lintang_klaster, 2);
-       $ls_splitName_klaster2= explode(' ’', $ls_splitName_klaster[1], 2);
-       $ls_splitName_klaster3= explode(' ”', $ls_splitName_klaster2[1], 2);
+       $ls_splitName_klaster = explode(' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â´ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¼', $koord_lintang_klaster, 2);
+       $ls_splitName_klaster2= explode(' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢', $ls_splitName_klaster[1], 2);
+       $ls_splitName_klaster3= explode(' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â', $ls_splitName_klaster2[1], 2);
 
        if($ket_lintang_klaster=='LS'){
          $koor_ls_ful_klaster='-'.$ls_splitName_klaster[0].$ls_splitName_klaster2[0].$ls_splitName_klaster3[0];
@@ -505,7 +472,7 @@ class KlasterController extends Controller
          DB::table('hak_milik_jenis_fungsi_hutan')->where('id_klaster_plot', $id_klaster)->update($data_milik);
          DB::commit(); // menyimpan data ke dalam database
                        // jika ada yang error, maka semua data tidak akan disimpan ke dalam database
-        session()->flash('insert', 'Data Klaster Plot berhasil diubah.');
+        session()->flash('edit', 'Data Klaster Plot berhasil diubah.');
        }
        catch(\Illuminate\Database\QueryException $e){
          throw new CustomException($e->getMessage());
@@ -532,9 +499,13 @@ class KlasterController extends Controller
        // setelah menghapus data
      }
 
-    public function detail_klaster_plot($id){
+     public function detail_klaster_plot($id){
 
-      $id=decrypt($id);
+      try{
+        $id = decrypt($id);
+      } catch (\Exception $e) {
+        // jika bukan payload terenkripsi, gunakan nilai apa adanya
+      }
 
       $id_data_klaster1 = DB::table('kategori_klaster')
       ->leftjoin('tbl_klaster_plot','tbl_klaster_plot.id_data_klaster','=','kategori_klaster.id_data_klaster')
@@ -579,198 +550,54 @@ class KlasterController extends Controller
       ->where('id_klaster_plot','=',$id)
       ->get();
 
-      $koordinat_bujur_p=$data->bujur_klaster;
-      if($koordinat_bujur_p==""){
-        $koordinat_bujur_p = "000 ᴼ 00 ’ 00.00 ”";
+      $parseDms = function ($raw) {
+        preg_match_all('/-?\\d+(?:\\.\\d+)?/', (string) $raw, $matches);
+        $deg = isset($matches[0][0]) ? (float) $matches[0][0] : 0;
+        $min = isset($matches[0][1]) ? (float) $matches[0][1] : 0;
+        $sec = isset($matches[0][2]) ? (float) $matches[0][2] : 0;
+        return [$deg, $min, $sec];
+      };
+
+      $formatDms = function ($deg, $min, $sec) {
+        return sprintf('%s%s %s\' %s"', $deg, chr(176), $min, $sec);
+      };
+
+      $buildCoord = function ($raw, $positiveLabel, $negativeLabel) use ($parseDms, $formatDms) {
+        [$deg, $min, $sec] = $parseDms($raw);
+        $label = $deg >= 0 ? $positiveLabel : $negativeLabel;
+        $degAbs = abs($deg);
+        $decimal = ($degAbs + $min / 60 + $sec / 3600) * ($label == $positiveLabel ? 1 : -1);
+        return [$formatDms($degAbs, $min, $sec), $label, $decimal];
+      };
+
+      list($koor_bt_ful_p, $ket_bujur_p, $koordinat_bujur_angka_klaster) =
+        $buildCoord($data->bujur_klaster, 'BT', 'BB');
+      list($koor_ls_ful_p, $ket_lintang_p, $koordinat_lintang_angka_klaster) =
+        $buildCoord($data->lintang_klaster, 'LU', 'LS');
+
+      list($koor_bt_ful_p_ikat, $ket_bujur_p_ikat) =
+        $buildCoord($data->koordinatBT, 'BT', 'BB');
+      list($koor_ls_ful_p_ikat, $ket_lintang_p_ikat) =
+        $buildCoord($data->koordinatLS, 'LU', 'LS');
+
+      $koordinat_bujur = [];
+      $koordinat_lintang = [];
+      $koor_bt_ful = [];
+      $koor_ls_ful = [];
+      $ket_bujur = [];
+      $ket_lintang = [];
+      $koor_bujur_plot = [];
+      $koor_lintang_plot = [];
+
+      for($i=0; $i<count($plot); $i++){
+        $koordinat_bujur[$i]=$plot[$i]->koordinat_BT;
+        list($koor_bt_ful[$i], $ket_bujur[$i], $koor_bujur_plot[$i]) =
+          $buildCoord($koordinat_bujur[$i], 'BT', 'BB');
+
+        $koordinat_lintang[$i]=$plot[$i]->koordinat_LS;
+        list($koor_ls_ful[$i], $ket_lintang[$i], $koor_lintang_plot[$i]) =
+          $buildCoord($koordinat_lintang[$i], 'LU', 'LS');
       }
-      $splitName_p = explode(' ', $koordinat_bujur_p, 2);
-      $splitName2_p= explode(' ', $splitName_p[1], 2);
-      $splitName3_p= explode(' ', $splitName2_p[1], 2);
-      if($splitName_p[0]>=0){
-        $ket_bujur_p='BT';
-        $long_derajat=$splitName_p[0];
-
-        $menit_b = $splitName2_p[0]/60;
-        $detik_b = $splitName3_p[0]/3600;
-
-        $koordinat_bujur_angka_klaster = $long_derajat + $menit_b + $detik_b;
-      }
-      else{
-        $ket_bujur_p='BB';
-        $splitName_p[0]=$splitName_p[0]*-1;
-
-        $long_derajat=$splitName_p[0]*-1;
-
-        $menit_b = $splitName2_p[0]/60;
-        $detik_b = $splitName3_p[0]/3600;
-
-        $koordinat_bujur_angka_klaster = $long_derajat - $menit_b - $detik_b;
-      }
-
-
-      $koor_bt_ful_p=$splitName_p[0].' ᴼ '.$splitName2_p[0].' ’ '.$splitName3_p[0].' ”';
-
-      $koordinat_lintang_p=$data->lintang_klaster;
-      if($koordinat_lintang_p==""){
-        $koordinat_lintang_p = "00 ᴼ 00 ’ 00.00 ”";
-      }
-      $l_splitName_p = explode(' ', $koordinat_lintang_p, 2);
-      $l_splitName2_p= explode(' ', $l_splitName_p[1], 2);
-      $l_splitName3_p= explode(' ', $l_splitName2_p[1], 2);
-      if($l_splitName_p[0]>=0){
-        $ket_lintang_p='LU';
-        $lat_derajat=$l_splitName_p[0];
-
-        $menit_l = $l_splitName2_p[0]/60;
-        $detik_l = $l_splitName3_p[0]/3600;
-
-        $koordinat_lintang_angka_klaster = $lat_derajat + $menit_l + $detik_l;
-      }
-      else{
-        $ket_lintang_p='LS';
-        $l_splitName_p[0]=$l_splitName_p[0]*-1;
-
-        $lat_derajat=$l_splitName_p[0]*-1;
-
-        $menit_l = $l_splitName2_p[0]/60;
-        $detik_l = $l_splitName3_p[0]/3600;
-
-        $koordinat_lintang_angka_klaster = $lat_derajat - $menit_l - $detik_l;
-      }
-
-
-      $koor_ls_ful_p=$l_splitName_p[0].' ᴼ '.$l_splitName2_p[0].' ’ '.$l_splitName3_p[0].' ”';
-
-      // koordinat titik ikat
-      $koordinat_bujur_p_ikat=$data->koordinatBT;
-      if($koordinat_bujur_p_ikat==""){
-        $koordinat_bujur_p_ikat = "000 ᴼ 00 ’ 00.00 ”";
-      }
-      $splitName_p_ikat = explode(' ', $koordinat_bujur_p_ikat, 2);
-      $splitName2_p_ikat= explode(' ', $splitName_p_ikat[1], 2);
-      $splitName3_p_ikat= explode(' ', $splitName2_p_ikat[1], 2);
-      if($splitName_p_ikat[0]>=0){
-        $ket_bujur_p_ikat='BT';
-        $long_derajat_ikat=$splitName_p_ikat[0];
-
-        $menit_b = $splitName2_p_ikat[0]/60;
-        $detik_b = $splitName3_p_ikat[0]/3600;
-
-        $koordinat_bujur_angka_klaster_ikat = $long_derajat_ikat + $menit_b + $detik_b;
-      }
-      else{
-        $ket_bujur_p_ikat='BB';
-        $splitName_p_ikat[0]=$splitName_p_ikat[0]*-1;
-
-        $long_derajat_ikat=$splitName_p_ikat[0]*-1;
-
-        $menit_b = $splitName2_p_ikat[0]/60;
-        $detik_b = $splitName3_p_ikat[0]/3600;
-
-        $koordinat_bujur_angka_klaster_ikat = $long_derajat_ikat - $menit_b - $detik_b;
-      }
-
-
-      $koor_bt_ful_p_ikat=$splitName_p_ikat[0].' ᴼ '.$splitName2_p_ikat[0].' ’ '.$splitName3_p_ikat[0].' ”';
-
-      $koordinat_lintang_p_ikat=$data->koordinatLS;
-      if($koordinat_lintang_p_ikat==""){
-        $koordinat_lintang_p_ikat = "00 ᴼ 00 ’ 00.00 ”";
-      }
-      $l_splitName_p_ikat = explode(' ', $koordinat_lintang_p_ikat, 2);
-      $l_splitName2_p_ikat= explode(' ', $l_splitName_p_ikat[1], 2);
-      $l_splitName3_p_ikat= explode(' ', $l_splitName2_p_ikat[1], 2);
-      if($l_splitName_p_ikat[0]>=0){
-        $ket_lintang_p_ikat='LU';
-        $lat_derajat_ikat=$l_splitName_p_ikat[0];
-
-        $menit_l = $l_splitName2_p_ikat[0]/60;
-        $detik_l = $l_splitName3_p_ikat[0]/3600;
-
-        $koordinat_lintang_angka_klaster_ikat = $lat_derajat_ikat + $menit_l + $detik_l;
-      }
-      else{
-        $ket_lintang_p_ikat='LS';
-        $l_splitName_p_ikat[0]=$l_splitName_p_ikat[0]*-1;
-
-        $lat_derajat_ikat=$l_splitName_p_ikat[0]*-1;
-
-        $menit_l = $l_splitName2_p_ikat[0]/60;
-        $detik_l = $l_splitName3_p_ikat[0]/3600;
-
-        $koordinat_lintang_angka_klaster_ikat = $lat_derajat_ikat - $menit_l - $detik_l;
-      }
-
-
-      $koor_ls_ful_p_ikat=$l_splitName_p_ikat[0].' ᴼ '.$l_splitName2_p_ikat[0].' ’ '.$l_splitName3_p_ikat[0].' ”';
-
-      for($i=0;$i<4;$i++){
-        //
-      $koordinat_bujur[$i]=$plot[$i]->koordinat_BT;
-      $splitName[$i] = explode(' ', $koordinat_bujur[$i], 2);
-      $splitName2[$i]= explode(' ', $splitName[$i][1], 2);
-      $splitName3[$i]= explode(' ', $splitName2[$i][1], 2);
-      if($splitName[$i][0]>=0){
-        $ket_bujur[$i]='BT';
-
-        $long_derajat_p=$splitName[$i][0];
-
-        $menit_b_plot[$i] = $splitName2[$i][0]/60;
-        $detik_b_plot[$i] = $splitName3[$i][0]/3600;
-
-        $koor_bujur_plot[$i]= $long_derajat_p + $menit_b_plot[$i] + $detik_b_plot[$i];
-      }
-      else{
-        $ket_bujur[$i]='BB';
-        $splitName[$i][0]=$splitName[$i][0]*-1;
-
-        $long_derajat_p=$splitName[$i][0]*-1;
-
-        $menit_b_plot[$i] = $splitName2[$i][0]/60;
-        $detik_b_plot[$i] = $splitName3[$i][0]/3600;
-
-        $koor_bujur_plot[$i]= $long_derajat_p - $menit_b_plot[$i] - $detik_b_plot[$i];
-      }
-
-
-      $koor_bt_ful[$i]=$splitName[$i][0].' ᴼ '.$splitName2[$i][0].' ’ '.$splitName3[$i][0].' ”';
-    }
-            //
-
-        for($i=0;$i<4;$i++){
-          //
-          $koordinat_lintang[$i]=$plot[$i]->koordinat_LS;
-          $l_splitName[$i] = explode(' ', $koordinat_lintang[$i], 2);
-          $l_splitName2[$i]= explode(' ', $l_splitName[$i][1], 2);
-          $l_splitName3[$i]= explode(' ', $l_splitName2[$i][1], 2);
-          if($l_splitName[$i][0]>=0){
-            $ket_lintang[$i]='LU';
-
-            $lat_derajat_p=$l_splitName[$i][0];
-
-            $menit_l_plot[$i] = $l_splitName2[$i][0]/60;
-            $detik_l_plot[$i] = $l_splitName3[$i][0]/3600;
-
-            $koor_lintang_plot[$i]= $lat_derajat_p + $menit_l_plot[$i] + $detik_l_plot[$i];
-          }
-          else{
-            $ket_lintang[$i]='LS';
-            $l_splitName[$i][0]=$l_splitName[$i][0]*-1;
-
-            $lat_derajat_p=$l_splitName[$i][0]*-1;
-
-            $menit_l_plot[$i] = $l_splitName2[$i][0]/60;
-            $detik_l_plot[$i] = $l_splitName3[$i][0]/3600;
-
-            $koor_lintang_plot[$i]= $lat_derajat_p - $menit_l_plot[$i] - $detik_l_plot[$i];
-          }
-
-
-
-          $koor_ls_ful[$i]=$l_splitName[$i][0].' ᴼ '.$l_splitName2[$i][0].' ’ '.$l_splitName3[$i][0].' ”';
-        }
-          //
-
           $cek_pengukuran = DB::table('kategori_klaster')
           ->where('id_data_klaster2','=',$id_data_klaster2)->first();
           $cek_pengukuran2 = DB::table('kategori_klaster')
@@ -796,7 +623,7 @@ else{
 }
 
 
-        return view('user.PlotUkur.detail_klaster',[
+        return view('auditor.PlotUkur.detail_klaster',[
           'lintang_masked' => $koordinat_lintang,
           'bujur_masked' => $koordinat_bujur,
           'id_data_klaster2' => $id_data_klaster2,
@@ -873,195 +700,54 @@ else{
       ->where('id_klaster_plot','=',$id)
       ->get();
 
-      $koordinat_bujur_p=$data->bujur_klaster;
-      if($koordinat_bujur_p==""){
-        $koordinat_bujur_p = "000 ᴼ 00 ’ 00.00 ”";
+      $parseDms = function ($raw) {
+        preg_match_all('/-?\\d+(?:\\.\\d+)?/', (string) $raw, $matches);
+        $deg = isset($matches[0][0]) ? (float) $matches[0][0] : 0;
+        $min = isset($matches[0][1]) ? (float) $matches[0][1] : 0;
+        $sec = isset($matches[0][2]) ? (float) $matches[0][2] : 0;
+        return [$deg, $min, $sec];
+      };
+
+      $formatDms = function ($deg, $min, $sec) {
+        return sprintf('%s%s %s\' %s"', $deg, chr(176), $min, $sec);
+      };
+
+      $buildCoord = function ($raw, $positiveLabel, $negativeLabel) use ($parseDms, $formatDms) {
+        [$deg, $min, $sec] = $parseDms($raw);
+        $label = $deg >= 0 ? $positiveLabel : $negativeLabel;
+        $degAbs = abs($deg);
+        $decimal = ($degAbs + $min / 60 + $sec / 3600) * ($label == $positiveLabel ? 1 : -1);
+        return [$formatDms($degAbs, $min, $sec), $label, $decimal];
+      };
+
+      list($koor_bt_ful_p, $ket_bujur_p, $koordinat_bujur_angka_klaster) =
+        $buildCoord($data->bujur_klaster, 'BT', 'BB');
+      list($koor_ls_ful_p, $ket_lintang_p, $koordinat_lintang_angka_klaster) =
+        $buildCoord($data->lintang_klaster, 'LU', 'LS');
+
+      list($koor_bt_ful_p_ikat, $ket_bujur_p_ikat) =
+        $buildCoord($data->koordinatBT, 'BT', 'BB');
+      list($koor_ls_ful_p_ikat, $ket_lintang_p_ikat) =
+        $buildCoord($data->koordinatLS, 'LU', 'LS');
+
+      $koordinat_bujur = [];
+      $koordinat_lintang = [];
+      $koor_bt_ful = [];
+      $koor_ls_ful = [];
+      $ket_bujur = [];
+      $ket_lintang = [];
+      $koor_bujur_plot = [];
+      $koor_lintang_plot = [];
+
+      for($i=0; $i<count($plot); $i++){
+        $koordinat_bujur[$i]=$plot[$i]->koordinat_BT;
+        list($koor_bt_ful[$i], $ket_bujur[$i], $koor_bujur_plot[$i]) =
+          $buildCoord($koordinat_bujur[$i], 'BT', 'BB');
+
+        $koordinat_lintang[$i]=$plot[$i]->koordinat_LS;
+        list($koor_ls_ful[$i], $ket_lintang[$i], $koor_lintang_plot[$i]) =
+          $buildCoord($koordinat_lintang[$i], 'LU', 'LS');
       }
-      $splitName_p = explode(' ', $koordinat_bujur_p, 2);
-      $splitName2_p= explode(' ', $splitName_p[1], 2);
-      $splitName3_p= explode(' ', $splitName2_p[1], 2);
-      if($splitName_p[0]>=0){
-        $ket_bujur_p='BT';
-        $long_derajat=$splitName_p[0];
-
-        $menit_b = $splitName2_p[0]/60;
-        $detik_b = $splitName3_p[0]/3600;
-
-        $koordinat_bujur_angka_klaster = $long_derajat + $menit_b + $detik_b;
-      }
-      else{
-        $ket_bujur_p='BB';
-        $splitName_p[0]=$splitName_p[0]*-1;
-
-        $long_derajat=$splitName_p[0]*-1;
-
-        $menit_b = $splitName2_p[0]/60;
-        $detik_b = $splitName3_p[0]/3600;
-
-        $koordinat_bujur_angka_klaster = $long_derajat - $menit_b - $detik_b;
-      }
-
-
-      $koor_bt_ful_p=$splitName_p[0].' ᴼ '.$splitName2_p[0].' ’ '.$splitName3_p[0].' ”';
-
-      $koordinat_lintang_p=$data->lintang_klaster;
-      if($koordinat_lintang_p==""){
-        $koordinat_lintang_p = "00 ᴼ 00 ’ 00.00 ”";
-      }
-      $l_splitName_p = explode(' ', $koordinat_lintang_p, 2);
-      $l_splitName2_p= explode(' ', $l_splitName_p[1], 2);
-      $l_splitName3_p= explode(' ', $l_splitName2_p[1], 2);
-      if($l_splitName_p[0]>=0){
-        $ket_lintang_p='LU';
-        $lat_derajat=$l_splitName_p[0];
-
-        $menit_l = $l_splitName2_p[0]/60;
-        $detik_l = $l_splitName3_p[0]/3600;
-
-        $koordinat_lintang_angka_klaster = $lat_derajat + $menit_l + $detik_l;
-      }
-      else{
-        $ket_lintang_p='LS';
-        $l_splitName_p[0]=$l_splitName_p[0]*-1;
-
-        $lat_derajat=$l_splitName_p[0]*-1;
-
-        $menit_l = $l_splitName2_p[0]/60;
-        $detik_l = $l_splitName3_p[0]/3600;
-
-        $koordinat_lintang_angka_klaster = $lat_derajat - $menit_l - $detik_l;
-      }
-
-
-      $koor_ls_ful_p=$l_splitName_p[0].' ᴼ '.$l_splitName2_p[0].' ’ '.$l_splitName3_p[0].' ”';
-
-      // koordinat titik ikat
-      $koordinat_bujur_p_ikat=$data->koordinatBT;
-      if($koordinat_bujur_p_ikat==""){
-        $koordinat_bujur_p_ikat = "000 ᴼ 00 ’ 00.00 ”";
-      }
-      $splitName_p_ikat = explode(' ', $koordinat_bujur_p_ikat, 2);
-      $splitName2_p_ikat= explode(' ', $splitName_p_ikat[1], 2);
-      $splitName3_p_ikat= explode(' ', $splitName2_p_ikat[1], 2);
-      if($splitName_p_ikat[0]>=0){
-        $ket_bujur_p_ikat='BT';
-        $long_derajat_ikat=$splitName_p_ikat[0];
-
-        $menit_b = $splitName2_p_ikat[0]/60;
-        $detik_b = $splitName3_p_ikat[0]/3600;
-
-        $koordinat_bujur_angka_klaster_ikat = $long_derajat_ikat + $menit_b + $detik_b;
-      }
-      else{
-        $ket_bujur_p_ikat='BB';
-        $splitName_p_ikat[0]=$splitName_p_ikat[0]*-1;
-
-        $long_derajat_ikat=$splitName_p_ikat[0]*-1;
-
-        $menit_b = $splitName2_p_ikat[0]/60;
-        $detik_b = $splitName3_p_ikat[0]/3600;
-
-        $koordinat_bujur_angka_klaster_ikat = $long_derajat_ikat - $menit_b - $detik_b;
-      }
-
-
-      $koor_bt_ful_p_ikat=$splitName_p_ikat[0].' ᴼ '.$splitName2_p_ikat[0].' ’ '.$splitName3_p_ikat[0].' ”';
-
-      $koordinat_lintang_p_ikat=$data->koordinatLS;
-      if($koordinat_lintang_p_ikat==""){
-        $koordinat_lintang_p_ikat = "00 ᴼ 00 ’ 00.00 ”";
-      }
-      $l_splitName_p_ikat = explode(' ', $koordinat_lintang_p_ikat, 2);
-      $l_splitName2_p_ikat= explode(' ', $l_splitName_p_ikat[1], 2);
-      $l_splitName3_p_ikat= explode(' ', $l_splitName2_p_ikat[1], 2);
-      if($l_splitName_p_ikat[0]>=0){
-        $ket_lintang_p_ikat='LU';
-        $lat_derajat_ikat=$l_splitName_p_ikat[0];
-
-        $menit_l = $l_splitName2_p_ikat[0]/60;
-        $detik_l = $l_splitName3_p_ikat[0]/3600;
-
-        $koordinat_lintang_angka_klaster_ikat = $lat_derajat_ikat + $menit_l + $detik_l;
-      }
-      else{
-        $ket_lintang_p_ikat='LS';
-        $l_splitName_p_ikat[0]=$l_splitName_p_ikat[0]*-1;
-
-        $lat_derajat_ikat=$l_splitName_p_ikat[0]*-1;
-
-        $menit_l = $l_splitName2_p_ikat[0]/60;
-        $detik_l = $l_splitName3_p_ikat[0]/3600;
-
-        $koordinat_lintang_angka_klaster_ikat = $lat_derajat_ikat - $menit_l - $detik_l;
-      }
-
-
-      $koor_ls_ful_p_ikat=$l_splitName_p_ikat[0].' ᴼ '.$l_splitName2_p_ikat[0].' ’ '.$l_splitName3_p_ikat[0].' ”';
-
-      for($i=0;$i<4;$i++){
-        //
-      $koordinat_bujur[$i]=$plot[$i]->koordinat_BT;
-      $splitName[$i] = explode(' ', $koordinat_bujur[$i], 2);
-      $splitName2[$i]= explode(' ', $splitName[$i][1], 2);
-      $splitName3[$i]= explode(' ', $splitName2[$i][1], 2);
-      if($splitName[$i][0]>=0){
-        $ket_bujur[$i]='BT';
-
-        $long_derajat_p=$splitName[$i][0];
-
-        $menit_b_plot[$i] = $splitName2[$i][0]/60;
-        $detik_b_plot[$i] = $splitName3[$i][0]/3600;
-
-        $koor_bujur_plot[$i]= $long_derajat_p + $menit_b_plot[$i] + $detik_b_plot[$i];
-      }
-      else{
-        $ket_bujur[$i]='BB';
-        $splitName[$i][0]=$splitName[$i][0]*-1;
-
-        $long_derajat_p=$splitName[$i][0]*-1;
-
-        $menit_b_plot[$i] = $splitName2[$i][0]/60;
-        $detik_b_plot[$i] = $splitName3[$i][0]/3600;
-
-        $koor_bujur_plot[$i]= $long_derajat_p - $menit_b_plot[$i] - $detik_b_plot[$i];
-      }
-
-
-      $koor_bt_ful[$i]=$splitName[$i][0].' ᴼ '.$splitName2[$i][0].' ’ '.$splitName3[$i][0].' ”';
-    }
-            //
-
-        for($i=0;$i<4;$i++){
-          //
-          $koordinat_lintang[$i]=$plot[$i]->koordinat_LS;
-          $l_splitName[$i] = explode(' ', $koordinat_lintang[$i], 2);
-          $l_splitName2[$i]= explode(' ', $l_splitName[$i][1], 2);
-          $l_splitName3[$i]= explode(' ', $l_splitName2[$i][1], 2);
-          if($l_splitName[$i][0]>=0){
-            $ket_lintang[$i]='LU';
-
-            $lat_derajat_p=$l_splitName[$i][0];
-
-            $menit_l_plot[$i] = $l_splitName2[$i][0]/60;
-            $detik_l_plot[$i] = $l_splitName3[$i][0]/3600;
-
-            $koor_lintang_plot[$i]= $lat_derajat_p + $menit_l_plot[$i] + $detik_l_plot[$i];
-          }
-          else{
-            $ket_lintang[$i]='LS';
-            $l_splitName[$i][0]=$l_splitName[$i][0]*-1;
-
-            $lat_derajat_p=$l_splitName[$i][0]*-1;
-
-            $menit_l_plot[$i] = $l_splitName2[$i][0]/60;
-            $detik_l_plot[$i] = $l_splitName3[$i][0]/3600;
-
-            $koor_lintang_plot[$i]= $lat_derajat_p - $menit_l_plot[$i] - $detik_l_plot[$i];
-          }
-
-          $koor_ls_ful[$i]=$l_splitName[$i][0].' ᴼ '.$l_splitName2[$i][0].' ’ '.$l_splitName3[$i][0].' ”';
-        }
-          //
           $cek_pengukuran = DB::table('kategori_klaster')
           ->where('id_data_klaster2','=',$id_data_klaster2)->first();
           $cek_pengukuran2 = DB::table('kategori_klaster')
@@ -1086,7 +772,8 @@ else{
   $ijin = Auth::user()->id;
 }
 
-        return view('user.PlotUkur.detail_klaster',[
+
+        return view('auditor.PlotUkur.detail_klaster',[
           'lintang_masked' => $koordinat_lintang,
           'bujur_masked' => $koordinat_bujur,
           'id_data_klaster2' => $id_data_klaster2,
@@ -1111,10 +798,10 @@ else{
           'koordinat_lintang_angka_klaster' => $koordinat_lintang_angka_klaster,
           'koor_lintang_plot' => $koor_lintang_plot,
           'koor_bujur_plot' => $koor_bujur_plot,
-
           'ijin' => $ijin,
           ]);
     }
+
 
     public function editPlot(Request $req)
     {
@@ -1127,38 +814,31 @@ else{
       $ket_bujur =  $req->input('pilih_bujur');
 
       if($koorniatBT==""){
-        $koorniatBT = "000 ᴼ 00 ’ 00.00 ”";
+        $koorniatBT = "0 0' 0.00\"";
       }
       if($koorniatLS==""){
-        $koorniatLS = "00 ᴼ 00 ’ 00.00 ”";
-      }
-      $pattern = '/_/i';
-      if(preg_match($pattern,$koorniatBT) || preg_match($pattern,$koorniatLS) ){
-        session()->flash('delete', 'Koordinat yang dimasukkan salah.');
-        return back();
+        $koorniatLS = "0 0' 0.00\"";
       }
 
-      $splitName = explode(' ᴼ', $koorniatBT, 2);
-      $splitName2= explode(' ’', $splitName[1], 2);
-      $splitName3= explode(' ”', $splitName2[1], 2);
+      $koorniatBT = str_replace('_', '', $koorniatBT);
+      $koorniatLS = str_replace('_', '', $koorniatLS);
 
-      if($ket_bujur=='BT'){
-        $koor_bt_ful=$splitName[0].$splitName2[0].$splitName3[0];
-      }
-      else{
-        $koor_bt_ful='-'.$splitName[0].$splitName2[0].$splitName3[0];
-      }
+      $normalizeCoord = function ($val, $hemi) {
+        if ($val === null) {
+          $val = '';
+        }
+        preg_match_all('/-?\d+(?:\.\d+)?/', $val, $m);
+        $nums = $m[0] ?? [];
+        $deg = isset($nums[0]) ? (float) $nums[0] : 0;
+        $min = isset($nums[1]) ? (float) $nums[1] : 0;
+        $sec = isset($nums[2]) ? (float) $nums[2] : 0;
+        $sign = ($hemi === 'LS' || $hemi === 'BB') ? -1 : 1;
+        $deg = $sign * abs($deg);
+        return trim(sprintf('%d %02d %05.2f', (int)$deg, (int)$min, $sec));
+      };
 
-      $ls_splitName = explode(' ᴼ', $koorniatLS, 2);
-      $ls_splitName2= explode(' ’', $ls_splitName[1], 2);
-      $ls_splitName3= explode(' ”', $ls_splitName2[1], 2);
-
-      if($ket_lintang=='LU'){
-        $koor_ls_ful=$ls_splitName[0].$ls_splitName2[0].$ls_splitName3[0];
-      }
-      else{
-        $koor_ls_ful='-'.$ls_splitName[0].$ls_splitName2[0].$ls_splitName3[0];
-      }
+      $koor_bt_ful = $normalizeCoord($koorniatBT, $ket_bujur);
+      $koor_ls_ful = $normalizeCoord($koorniatLS, $ket_lintang);
 
       $data_plot = array(
         'nama_plot' => $nama_plot,
@@ -1176,7 +856,11 @@ else{
     }
 
     public function detailPlot($id){
-      $id=decrypt($id);
+      try{
+        $id = decrypt($id);
+      } catch (\Exception $e) {
+        // gunakan nilai apa adanya jika bukan terenkripsi
+      }
       $id_klaster=DB::table('tbl_plot')->select('id_klaster_plot')
       ->where('id_plot','=',$id)
       ->first();
@@ -1456,8 +1140,8 @@ else{
         $ket_bujur_p='BT';
 
         $long_derajat = $splitName_p[0];
-        $menit_b = $splitName2_p[0]/60;
-        $detik_b = $splitName3_p[0]/3600;
+        $menit_b = floatval($splitName2_p[0])/60;
+        $detik_b = floatval($splitName3_p[0])/3600;
 
         $koordinat_bujur_angka_klaster = $long_derajat + $menit_b + $detik_b;
       }
@@ -1466,15 +1150,15 @@ else{
         $splitName_p[0]=$splitName_p[0]*-1;
 
         $long_derajat = $splitName_p[0]*-1;
-        $menit_b = $splitName2_p[0]/60;
-        $detik_b = $splitName3_p[0]/3600;
+        $menit_b = floatval($splitName2_p[0])/60;
+        $detik_b = floatval($splitName3_p[0])/3600;
 
         $koordinat_bujur_angka_klaster = $long_derajat - $menit_b - $detik_b;
       }
 
 
 
-      $koor_bt_ful_p=$splitName_p[0].' ᴼ '.$splitName2_p[0].' ’ '.$splitName3_p[0].' ”';
+      $koor_bt_ful_p=$splitName_p[0].' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â´ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¼ '.$splitName2_p[0].' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ '.$splitName3_p[0].' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â';
 
       $koordinat_lintang_p=$nama_plot->koordinat_LS;
       $l_splitName_p = explode(' ', $koordinat_lintang_p, 2);
@@ -1484,8 +1168,8 @@ else{
         $ket_lintang_p='LU';
 
         $lat_derajat = $l_splitName_p[0];
-        $menit_l = $l_splitName2_p[0]/60;
-        $detik_l = $l_splitName3_p[0]/3600;
+        $menit_l = floatval($l_splitName2_p[0])/60;
+        $detik_l = floatval($l_splitName3_p[0])/3600;
 
         $koordinat_lintang_angka_klaster = $lat_derajat + $menit_l + $detik_l;
       }
@@ -1494,16 +1178,16 @@ else{
         $l_splitName_p[0]=$l_splitName_p[0]*-1;
 
         $lat_derajat = $l_splitName_p[0]*-1;
-        $menit_l = $l_splitName2_p[0]/60;
-        $detik_l = $l_splitName3_p[0]/3600;
+        $menit_l = floatval($l_splitName2_p[0])/60;
+        $detik_l = floatval($l_splitName3_p[0])/3600;
 
         $koordinat_lintang_angka_klaster = $lat_derajat - $menit_l - $detik_l;
       }
 
 
-      $koor_ls_ful_p=$l_splitName_p[0].' ᴼ '.$l_splitName2_p[0].' ’ '.$l_splitName3_p[0].' ”';
+      $koor_ls_ful_p=$l_splitName_p[0].' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â´ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¼ '.$l_splitName2_p[0].' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ '.$l_splitName3_p[0].' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â';
 
-      return view('user.PlotUkur.detail_data_plot',[
+      return view('auditor.PlotUkur.detail_data_plot',[
         'id_data_klaster2' => $id_data_klaster2,
         'koor_bt_ful_p'=>$koor_bt_ful_p,
         'koor_ls_ful_p'=>$koor_ls_ful_p,
@@ -1811,8 +1495,8 @@ else{
         $ket_bujur_p='BT';
 
         $long_derajat = $splitName_p[0];
-        $menit_b = $splitName2_p[0]/60;
-        $detik_b = $splitName3_p[0]/3600;
+        $menit_b = floatval($splitName2_p[0])/60;
+        $detik_b = floatval($splitName3_p[0])/3600;
 
         $koordinat_bujur_angka_klaster = $long_derajat + $menit_b + $detik_b;
       }
@@ -1821,15 +1505,15 @@ else{
         $splitName_p[0]=$splitName_p[0]*-1;
 
         $long_derajat = $splitName_p[0]*-1;
-        $menit_b = $splitName2_p[0]/60;
-        $detik_b = $splitName3_p[0]/3600;
+        $menit_b = floatval($splitName2_p[0])/60;
+        $detik_b = floatval($splitName3_p[0])/3600;
 
         $koordinat_bujur_angka_klaster = $long_derajat - $menit_b - $detik_b;
       }
 
 
 
-      $koor_bt_ful_p=$splitName_p[0].' ᴼ '.$splitName2_p[0].' ’ '.$splitName3_p[0].' ”';
+      $koor_bt_ful_p=$splitName_p[0].' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â´ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¼ '.$splitName2_p[0].' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ '.$splitName3_p[0].' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â';
 
       $koordinat_lintang_p=$nama_plot->koordinat_LS;
       $l_splitName_p = explode(' ', $koordinat_lintang_p, 2);
@@ -1839,8 +1523,8 @@ else{
         $ket_lintang_p='LU';
 
         $lat_derajat = $l_splitName_p[0];
-        $menit_l = $l_splitName2_p[0]/60;
-        $detik_l = $l_splitName3_p[0]/3600;
+        $menit_l = floatval($l_splitName2_p[0])/60;
+        $detik_l = floatval($l_splitName3_p[0])/3600;
 
         $koordinat_lintang_angka_klaster = $lat_derajat + $menit_l + $detik_l;
       }
@@ -1849,16 +1533,16 @@ else{
         $l_splitName_p[0]=$l_splitName_p[0]*-1;
 
         $lat_derajat = $l_splitName_p[0]*-1;
-        $menit_l = $l_splitName2_p[0]/60;
-        $detik_l = $l_splitName3_p[0]/3600;
+        $menit_l = floatval($l_splitName2_p[0])/60;
+        $detik_l = floatval($l_splitName3_p[0])/3600;
 
         $koordinat_lintang_angka_klaster = $lat_derajat - $menit_l - $detik_l;
       }
 
 
-      $koor_ls_ful_p=$l_splitName_p[0].' ᴼ '.$l_splitName2_p[0].' ’ '.$l_splitName3_p[0].' ”';
+      $koor_ls_ful_p=$l_splitName_p[0].' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â´ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¼ '.$l_splitName2_p[0].' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ '.$l_splitName3_p[0].' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â';
 
-      return view('user.PlotUkur.detail_data_plot',[
+      return view('auditor.PlotUkur.detail_data_plot',[
         'id_data_klaster2' => $id_data_klaster2,
         'koor_bt_ful_p'=>$koor_bt_ful_p,
         'koor_ls_ful_p'=>$koor_ls_ful_p,
@@ -1978,10 +1662,10 @@ else{
         $ket_bujur = $req->input('pilih_bujur');
 
         if($koorniatBT==""){
-          $koorniatBT = "000 ᴼ 00 ’ 00.00 ”";
+          $koorniatBT = "000 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â´ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¼ 00 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ 00.00 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â";
         }
         if($koorniatLS==""){
-          $koorniatLS = "00 ᴼ 00 ’ 00.00 ”";
+          $koorniatLS = "00 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â´ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¼ 00 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ 00.00 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â";
         }
         $pattern = '/_/i';
         if(preg_match($pattern,$koorniatBT) || preg_match($pattern,$koorniatLS) ){
@@ -1989,9 +1673,9 @@ else{
           return back();
         }
 
-        $splitName = explode(' ᴼ', $koorniatBT, 2);
-        $splitName2= explode(' ’', $splitName[1], 2);
-        $splitName3= explode(' ”', $splitName2[1], 2);
+        $splitName = explode(' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â´ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¼', $koorniatBT, 2);
+        $splitName2= explode(' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢', $splitName[1], 2);
+        $splitName3= explode(' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â', $splitName2[1], 2);
         if($ket_bujur=='BT'){
           $koor_bt_ful=$splitName[0].$splitName2[0].$splitName3[0];
         }
@@ -2000,9 +1684,9 @@ else{
         }
 
 
-        $ls_splitName = explode(' ᴼ', $koorniatLS, 2);
-        $ls_splitName2= explode(' ’', $ls_splitName[1], 2);
-        $ls_splitName3= explode(' ”', $ls_splitName2[1], 2);
+        $ls_splitName = explode(' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â´ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¼', $koorniatLS, 2);
+        $ls_splitName2= explode(' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢', $ls_splitName[1], 2);
+        $ls_splitName3= explode(' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â', $ls_splitName2[1], 2);
         if($ket_lintang=='LS'){
           $koor_ls_ful='-'.$ls_splitName[0].$ls_splitName2[0].$ls_splitName3[0];
         }
@@ -2070,10 +1754,10 @@ else{
 
 
         if($koorniatBT==""){
-          $koorniatBT = "000 ᴼ 00 ’ 00.00 ”";
+          $koorniatBT = "000 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â´ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¼ 00 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ 00.00 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â";
         }
         if($koorniatLS==""){
-          $koorniatLS = "00 ᴼ 00 ’ 00.00 ”";
+          $koorniatLS = "00 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â´ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¼ 00 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ 00.00 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â";
         }
         $pattern = '/_/i';
         if(preg_match($pattern,$koorniatBT) || preg_match($pattern,$koorniatLS) ){
@@ -2081,9 +1765,9 @@ else{
           return back();
         }
 
-        $splitName = explode(' ᴼ', $koorniatBT, 2);
-        $splitName2= explode(' ’', $splitName[1], 2);
-        $splitName3= explode(' ”', $splitName2[1], 2);
+        $splitName = explode(' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â´ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¼', $koorniatBT, 2);
+        $splitName2= explode(' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢', $splitName[1], 2);
+        $splitName3= explode(' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â', $splitName2[1], 2);
         if($ket_bujur=='BT'){
           $koor_bt_ful=$splitName[0].$splitName2[0].$splitName3[0];
         }
@@ -2092,9 +1776,9 @@ else{
         }
 
 
-        $ls_splitName = explode(' ᴼ', $koorniatLS, 2);
-        $ls_splitName2= explode(' ’', $ls_splitName[1], 2);
-        $ls_splitName3= explode(' ”', $ls_splitName2[1], 2);
+        $ls_splitName = explode(' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â´ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¼', $koorniatLS, 2);
+        $ls_splitName2= explode(' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢', $ls_splitName[1], 2);
+        $ls_splitName3= explode(' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â', $ls_splitName2[1], 2);
         if($ket_lintang=='LS'){
           $koor_ls_ful='-'.$ls_splitName[0].$ls_splitName2[0].$ls_splitName3[0];
         }
@@ -2156,7 +1840,11 @@ else{
 
     public function tertimbang($id)
     {
-      $id=decrypt($id);
+      try{
+        $id = decrypt($id);
+      } catch (\Exception $e) {
+        // gunakan nilai apa adanya jika bukan terenkripsi
+      }
       $nama_data_klaster = DB::table('kategori_klaster')
       ->where('id_data_klaster', '=', $id)->first();
 
@@ -2164,7 +1852,7 @@ else{
       ->where('id_data_klaster', '=', $id)
       ->first();
 
-      return view('user.PlotUkur.nilaiTertimbang',[
+      return view('auditor.PlotUkur.nilaiTertimbang',[
         'nama'=>$nama_data_klaster,
         'data_nilai'=>$data_nilai,
 
@@ -2224,3 +1912,11 @@ else{
       return back();
     }
 }
+
+
+
+
+
+
+
+

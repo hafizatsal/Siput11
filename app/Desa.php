@@ -6,7 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Desa extends Model
 {
-    protected $table= 'desa';
+    protected $table = 'desa';
     // gunakan tipe string untuk primary key non-integer agar casting tidak gagal
-    protected $keyType= 'string';
+    protected $keyType = 'string';
+    public $incrementing = false;
 }

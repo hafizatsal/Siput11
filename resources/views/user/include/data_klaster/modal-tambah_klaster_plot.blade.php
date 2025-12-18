@@ -19,7 +19,7 @@
 							<div class="tab-content">
 								<!-- tab 5 -->
 								<div class="tab-pane active" id="tab_5">
-                  <form id="form_tambah_klaster" method="post" onsubmit="return false;">
+                  <form id="form_tambah_klaster" method="post" action="{{ route('user.insert_klaster') }}">
                   {{csrf_field()}}
                     <input type="hidden" id="id_tambah_data_klaster" name="id_tambah_data_klaster" value="{{$data_nama_klaster->id_data_klaster}}">
                     <input type="hidden" id="tahun_pengukuran" name="tahun_pengukuran" value="{{$data_pengukuran->tahun_pengukuran}}">
@@ -30,7 +30,7 @@
 											<div class="col-md-6">
 												<div id="input-kode-klaster-plot" class="form-group">
 													<label>Kode Klaster Plot *</label>
-													<input type="text" name="kode_klaster_plot" id="kode_klaster_plot" class="form-control" placeholder="Contoh : CL1,CL2,CL3,dst">
+													<input type="text" name="kode_klaster_plot" id="kode_klaster_plot" class="form-control" placeholder="Misal: 1 atau CL1">
 													<label hidden id="id_kode_klaster_plot" class="control-label"><i>Kode klaster plot salah! (3-10 huruf).</i>
 													</label>
 												</div>
@@ -74,8 +74,7 @@
 											<div class="col-md-12">
 												<div id="input-provinsi" class="form-group">
 													<label>Provinsi *</label>
-                          <input type="hidden" name="provinsi" id="provinsi_hidden">
-													<select class="form-control" form="noop_form" id="provinsi_klaster">
+													<select class="form-control" name="provinsi" id="provinsi_klaster">
 														<option value="" disable="true" selected="true">=== Silahkan Pilih ===</option>@foreach ($provinsi as $key => $value)
 														<option value="{{$value->id_provinsi}}">{{$value->nama_provinsi}}</option>@endforeach</select>
 													<label hidden id="id_provinsi" class="control-label"><i>Provinsi harus diisi!</i>
@@ -88,8 +87,7 @@
 											<div class="col-md-12">
 												<div id="input-kabupaten" class="form-group">
 													<label>Kabupaten *</label>
-                          <input type="hidden" name="kabupaten" id="kabupaten_hidden">
-													<select class="form-control" form="noop_form" id="kabupaten_klaster">
+													<select class="form-control" name="kabupaten" id="kabupaten_klaster">
 														<option value="" disable="true" selected="true">=== Silahkan Pilih ===</option>
 													</select>
 													<label hidden id="id_kabupaten" class="control-label"><i>Kabupaten harus diisi!</i>
@@ -102,8 +100,7 @@
 											<div class="col-md-12">
 												<div id="input-kecamatan" class="form-group">
 													<label>Kecamatan *</label>
-                          <input type="hidden" name="kecamatan" id="kecamatan_hidden">
-													<select class="form-control" form="noop_form" id="kecamatan_klaster">
+													<select class="form-control" name="kecamatan" id="kecamatan_klaster">
 														<option value="" disable="true" selected="true">=== Silahkan Pilih ===</option>
 													</select>
 													<label hidden id="id_kecamatan" class="control-label"><i>Kecamatan harus diisi!</i>
@@ -116,8 +113,7 @@
 											<div class="col-md-12">
 												<div id="input-desa" class="form-group">
 													<label class="control-label">Desa *</label>
-                          <input type="hidden" name="desa" id="desa_hidden">
-													<select class="form-control" form="noop_form" id="desa_klaster">
+													<select class="form-control" name="desa" id="desa_klaster">
 														<option value="" disable="true" selected="true">=== Silahkan Pilih ===</option>
 													</select>
 													<label hidden id="id_desa" class="control-label"><i>Desa harus diisi!</i>
@@ -356,7 +352,7 @@
 										<div class="col-md-12">
 											<br/>
 											<button type="button" id="btnkmbli" class="btn btn-default">Kembali</button>
-											<button type="button" id="submit" class="btn btn-primary pull-right">Simpan</button>
+											<button type="submit" id="submit" class="btn btn-primary pull-right">Simpan</button>
 										</div>
 									</div>
                   </form>
@@ -373,9 +369,6 @@
 	<!-- /.modal -->
 </div>
 
-
-<!-- form kosong untuk melepaskan dropdown dari form utama -->
-<form id="noop_form" onsubmit="return false;" style="display:none"></form>
 
 <!-- InputMask -->
 
@@ -407,35 +400,6 @@ $(document).ready(function (){
     $.ajaxSetup({
       headers: { 'X-CSRF-TOKEN': csrfToken }
     });
-  }
-
-  // Kunci submit form kecuali diizinkan eksplisit (mencegah redirect tak sengaja)
-  const $form = $('#form_tambah_klaster');
-  if ($form.length) {
-    $form.data('allow-submit', false);
-    // tahan submit via trigger biasa
-    $form.on('submit', function (e) {
-      if (!$(this).data('allow-submit')) {
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        return false;
-      }
-    });
-    // listener capture level untuk jaga-jaga
-    $form.get(0).addEventListener('submit', function (e) {
-      if (!$form.data('allow-submit')) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-    }, true);
-    // tahan submit yang dipanggil secara native (form.submit())
-    const nativeSubmit = $form.get(0).submit;
-    $form.get(0).submit = function () {
-      if ($form.data('allow-submit')) {
-        return nativeSubmit.call(this);
-      }
-      return false;
-    };
   }
         // variable untuk validasi, jika 0 artinya masih salah, jika 1 benar
         // 11 adalah jumlah input text nya yang menyatakan benar semua baru
@@ -598,12 +562,10 @@ $(document).on('change','#provinsi_klaster', function (e) {
         $('#input-provinsi').removeClass('has-error').addClass('has-success');
         $('#id_provinsi').hide();
         v_provinsi = 1;
-        $('#provinsi_hidden').val(id_provinsi);
     } else {
         $('#input-provinsi').removeClass('has-success').addClass('has-error');
         $('#id_provinsi').show();
         v_provinsi = 0;
-        $('#provinsi_hidden').val('');
     }
 
     // RESET DROPDOWN BAWAHNYA
@@ -655,12 +617,10 @@ $(document).on('change', '#kabupaten_klaster', function (e) {
         $('#input-kabupaten').removeClass('has-error').addClass('has-success');
         $('#id_kabupaten').hide();
         v_kabupaten = 1;
-        $('#kabupaten_hidden').val(id_kabupaten);
     } else {
         $('#input-kabupaten').removeClass('has-success').addClass('has-error');
         $('#id_kabupaten').show();
         v_kabupaten = 0;
-        $('#kabupaten_hidden').val('');
     }
 
     // reset bawahnya
@@ -708,12 +668,10 @@ $(document).on('change','#kecamatan_klaster', function (e) {
         $('#input-kecamatan').removeClass('has-error').addClass('has-success');
         $('#id_kecamatan').hide();
         v_kecamatan = 1;
-        $('#kecamatan_hidden').val(id_kecamatan);
     } else {
         $('#input-kecamatan').removeClass('has-success').addClass('has-error');
         $('#id_kecamatan').show();
         v_kecamatan = 0;
-        $('#kecamatan_hidden').val('');
     }
 
     // reset desa
@@ -721,7 +679,6 @@ $(document).on('change','#kecamatan_klaster', function (e) {
     $('#input-desa').removeClass('has-success').addClass('has-error');
     $('#id_desa').show();
     $('#desa_klaster').html('<option value="">=== Silahkan Pilih ===</option>');
-    $('#desa_hidden').val('');
 
     if (id_kecamatan === "") return;
 
@@ -740,7 +697,7 @@ $(document).on('change','#kecamatan_klaster', function (e) {
                 });
                 // auto set hidden if only one option
                 if (data.length === 1) {
-                  $('#desa_hidden').val(data[0].id);
+                  $('#desa_klaster').val(data[0].id);
                 }
             } else {
                 $('#desa_klaster').html('<option value="">Data kosong</option>');
@@ -764,12 +721,10 @@ $(document).on('change', '#desa_klaster', function (e) {
         $('#input-desa').removeClass('has-error').addClass('has-success');
         $('#id_desa').hide();
         v_desa = 1;
-        $('#desa_hidden').val(id_desa);
     } else {
         $('#input-desa').removeClass('has-success').addClass('has-error');
         $('#id_desa').show();
         v_desa = 0;
-        $('#desa_hidden').val('');
     }
 });
 
@@ -798,8 +753,22 @@ $(document).on('change', '#desa_klaster', function (e) {
   // untuk validasi kode klaster plot
   var v_kode_klaster_plot = 0;
   var valid_kode_klaster = /^[a-zA-Z][a-zA-Z0-9]{2,9}$/; //untuk validasi kode klaster
-  $('#input-kode-klaster-plot').on('input', function () {
-    kode_klaster_plot = $('#kode_klaster_plot').val();
+  function normalizeKodeKlaster() {
+    let val = $('#kode_klaster_plot').val().trim().toUpperCase().replace(/\s+/g, '');
+    // jika hanya angka, otomatis tambahkan CL di depan
+    if (val && /^\d+$/.test(val)) {
+      val = 'CL' + val;
+    }
+    // jika tidak diawali CL, tambahkan
+    if (val && !/^CL/.test(val)) {
+      val = 'CL' + val;
+    }
+    $('#kode_klaster_plot').val(val);
+    return val;
+  }
+
+  $('#input-kode-klaster-plot').on('blur keyup', function () {
+    kode_klaster_plot = normalizeKodeKlaster();
     if (kode_klaster_plot.match(valid_kode_klaster)) {
       $('#input-kode-klaster-plot').attr("class", "form-group has-success");
       $('#id_kode_klaster_plot').hide();
@@ -1081,28 +1050,15 @@ $('#form_tambah_klaster').on('keydown', function (e) {
 });
 
 // ================================
-// SUBMIT AMAN (HANYA VIA TOMBOL)
+// SUBMIT FORM (copy hidden lalu submit native)
 // ================================
-$('#submit').on('click', function (e) {
-    e.preventDefault();
+$('#form_tambah_klaster').on('submit', function () {
+  $('#submit').prop('disabled', true).text('Sedang menyimpan...');
+});
 
-    $(this).prop('disabled', true).text('Sedang menyimpan...');
-
-    const $f = $('#form_tambah_klaster');
-    // pastikan nilai dropdown yang ada di form noop disalin ke hidden sebelum submit
-    $('#provinsi_hidden').val($('#provinsi_klaster').val());
-    $('#kabupaten_hidden').val($('#kabupaten_klaster').val());
-    $('#kecamatan_hidden').val($('#kecamatan_klaster').val());
-    $('#desa_hidden').val($('#desa_klaster').val());
-    $f.off('submit');
-    $f.get(0).onsubmit = null;
-    // salin nilai dropdown ke hidden yang dikirim ke server
-    // nilai dropdown sudah langsung dikirim lewat name yang sama
-    $f
-        .data('allow-submit', true)
-        .attr('action', '{{ route("user.insert_klaster") }}')
-        .trigger('submit');
+$('#tambah_klaster_plot').on('hidden.bs.modal', function () {
+  $('#submit').prop('disabled', false).text('Simpan');
 });
-});
-});
+}); // end $(document).ready
+}); // end waitJQ wrapper
 </script>

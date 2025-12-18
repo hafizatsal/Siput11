@@ -1,4 +1,4 @@
-@extends('layouts.layout')
+﻿@extends('layouts.layout')
 @section('title','Halaman Klaster')
 @section('active_plot_ukur','active')
 @section('active_klaster','active')
@@ -129,7 +129,7 @@
             <tr>
               <td>Azimuth</td>
               <td> : </td>
-              <td>{{$data->azimuth}} ᴼ</td>
+              <td>{{$data->azimuth}}&deg;</td>
             </tr>
             <tr>
               <td>Jarak</td>

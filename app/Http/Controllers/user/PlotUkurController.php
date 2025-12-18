@@ -344,7 +344,11 @@ class PlotUkurController extends Controller
 
     public function klaster_plot($id)
     {
-      $id=decrypt($id);
+      try{
+        $id = decrypt($id);
+      } catch (\Exception $e) {
+        // gunakan apa adanya jika bukan payload terenkripsi
+      }
       $data_klaster_plot = DB::table('tbl_klaster_plot')
       ->leftjoin(
       'hak_milik_jenis_fungsi_hutan',
