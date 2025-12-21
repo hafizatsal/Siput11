@@ -18,7 +18,7 @@
           @if (session('success'))
             <div class="alert alert-success"> {{ session('success') }} </div>
           @endif
-          <form id="form-change-password" role="form" method="POST" action="{{route('password_ubah_auditor')}}"
+          <form id="form-change-password" role="form" method="POST" action="{{route('auditor.password_ubah')}}"
           novalidate class="form-horizontal">
           <div class="col-md-9">
             <label for="current-password" class="col-sm-4 control-label">Current Password</label>

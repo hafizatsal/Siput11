@@ -7,7 +7,7 @@
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">Tambah Data Kualitas Tapak (Fisik)</h4>
+        <h4 class="modal-title">Tambah Data Kualitas Tapak (Fisika)</h4>
       </div>
       <div class="modal-body">
         <form role="form" method="post" action="{{route('user.tambah_fisik')}}"
@@ -260,3 +260,4 @@ $('#modal_tambah_fisik').on('show.bs.modal', function(event){
   });
 </script>
 @endsection
+

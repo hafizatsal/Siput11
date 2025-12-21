@@ -188,6 +188,7 @@
 </div>
 
 {{-- ================ SCRIPT UNTUK FILL OTOMATIS ================ --}}
+@push('script_tambahan')
 <script>
     $(document).on("click", ".btnEditPengukuran", function () {
 
@@ -270,3 +271,4 @@
         });
     });
 </script>
+@endpush

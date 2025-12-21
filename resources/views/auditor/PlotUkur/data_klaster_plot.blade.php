@@ -3,7 +3,7 @@
 @section('css')
 @endsection
 @section('active_plot_ukur','active')
-@section('active_klaster','active')
+@section('active_data_klaster_plot','active')
 @section('breadcrumb')
 <li><a href="#">Data Klaster Plot</a></li>
 @endsection
@@ -73,9 +73,11 @@
 @include('auditor.include.data_klaster.modal-tambah_data_klaster')
 @endsection
 
+@push('script_tambahan')
 <script src="{{asset('Admin/modal_ajax.min.js')}}"></script>
-<script src="{{asset('Admin/bower_components/jquery/dist/jquery.min.js')}}"></script>
+@endpush
 
+@push('script_tambahan')
 <script type="text/javascript">
 $(document).ready(function(){
 
@@ -197,3 +199,4 @@ $(document).ready(function(){
 
 });
 </script>
+@endpush

@@ -7,6 +7,10 @@ use App\Http\Controllers\Controller;
 use App\Exceptions\CustomException;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
+use App\Services\WilayahSyncService;
+use App\Jobs\WilayahSyncJob;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class LokasiController extends Controller
 {
@@ -98,5 +102,54 @@ class LokasiController extends Controller
     ->where('id_provinsi', '=', $id_provinsi)
     ->get();
     return response()->json($provinsi);
+  }
+
+  public function sync(Request $req, WilayahSyncService $service)
+  {
+    $provinsiApiId = $req->input('provinsi_api_id');
+    $depth = $req->input('sync_depth', config('wilayah.sync_depth'));
+
+    $statusKey = 'wilayah_sync_status_admin_' . Auth::id();
+    $cancelKey = 'wilayah_sync_cancel_admin_' . Auth::id();
+    $historyKey = 'wilayah_sync_history_admin_' . Auth::id();
+    Cache::forget($cancelKey);
+    Cache::put($statusKey, [
+      'status' => 'queued',
+      'message' => 'Sync masuk antrian.',
+      'queued_at' => now()->toDateTimeString(),
+    ], 86400);
+
+    WilayahSyncJob::dispatch($provinsiApiId, $depth, $statusKey, $cancelKey, $historyKey);
+    session()->flash('insert', 'Sync diproses di background. Jangan menutup halaman sampai selesai.');
+
+    return back();
+  }
+
+  public function syncStatus()
+  {
+    $statusKey = 'wilayah_sync_status_admin_' . Auth::id();
+    $historyKey = 'wilayah_sync_history_admin_' . Auth::id();
+    $status = Cache::get($statusKey, ['status' => 'idle']);
+    $status['history'] = Cache::get($historyKey, []);
+    return response()->json($status);
+  }
+
+  public function syncCancel(Request $req)
+  {
+    $statusKey = 'wilayah_sync_status_admin_' . Auth::id();
+    $cancelKey = 'wilayah_sync_cancel_admin_' . Auth::id();
+
+    Cache::put($cancelKey, true, 86400);
+    Cache::put($statusKey, [
+      'status' => 'cancelling',
+      'message' => 'Membatalkan sync...',
+      'updated_at' => now()->toDateTimeString(),
+    ], 86400);
+
+    if ($req->expectsJson()) {
+      return response()->json(['status' => 'cancelling']);
+    }
+
+    return redirect()->route('admin.lokasi')->with('insert', 'Permintaan pembatalan dikirim. Tunggu sampai proses berhenti.');
   }
 }

@@ -216,7 +216,7 @@
     @if($p_fisik!="")
         <div class="box box-warning">
             <div class="box-header with-border">
-                <h3 class="box-title"><b>Data Kualitas Tapak (Fisik)</b></h3>
+                <h3 class="box-title"><b>Data Kualitas Tapak (Fisika)</b></h3>
             </div>
             <div class="box-body">
                 <div class="table-responsive">
@@ -853,7 +853,6 @@
 {{-- =================== JS LIBRARIES (INJEK VIA LAYOUT) =================== --}}
 @section('data_table')
     {{-- jQuery + vendor --}}
-    <script src="{{asset('Admin/bower_components/jquery/dist/jquery.min.js')}}"></script>
     <script src="{{asset('Admin/bower_components/raphael/raphael.min.js')}}"></script>
     <script src="{{asset('Admin/bower_components/morris.js/morris.min.js')}}"></script>
 
@@ -1184,3 +1183,4 @@
         });
     </script>
 @endsection
+

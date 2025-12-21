@@ -72,8 +72,9 @@
     <!-- /.col -->
   </div>
   <!-- /.row -->
+@push('script_tambahan')
   <script src="{{asset('Admin/modal_ajax.min.js')}}"></script>
-  <script src="{{asset('Admin/bower_components/jquery/dist/jquery.min.js')}}"></script>
+@endpush
 @section('data_table')
 <!-- DataTables -->
 <script src="{{asset('Admin/bower_components/datatables.net/js/jquery.dataTables.min.js')}}"></script>

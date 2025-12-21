@@ -72,8 +72,7 @@ class Handler extends ExceptionHandler
               break;
 
               case 403:
-                  $exception->msg = "Forbidden request";
-                  return response()->view('error.msg', ['title' => "Error" ,'header' => $exception->getStatusCode(),'msg' => $exception->msg], $exception->getStatusCode());
+                  return response()->view('error.403', ['title' => "Akses Ditolak"], $exception->getStatusCode());
               break;
 
               case 404:

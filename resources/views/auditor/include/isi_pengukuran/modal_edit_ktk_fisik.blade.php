@@ -7,7 +7,7 @@
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">Edit Data Kualitas Tapak (Fisik)</h4>
+        <h4 class="modal-title">Edit Data Kualitas Tapak (Fisika)</h4>
       </div>
       <div class="modal-body">
         <form role="form" method="post" action="{{route('auditor.edit_fisik')}}"
@@ -109,6 +109,7 @@
   <script src="{{asset('Admin/plugins/input-mask/jquery.inputmask.date.extensions.js')}}"></script>
   <script src="{{asset('Admin/plugins/input-mask/jquery.inputmask.extensions.js')}}"></script>
 @endsection
+@push('script_tambahan')
 <script type="text/javascript">
   $(document).ready(function(){
     $('[data-mask_tanah2]').inputmask();
@@ -330,3 +331,4 @@
 
   });
 </script>
+@endpush

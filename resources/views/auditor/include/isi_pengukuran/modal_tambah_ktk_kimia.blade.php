@@ -56,6 +56,7 @@
 @section('script_tambahan')
 <script src="{{asset('Admin/bower_components/select2/dist/js/select2.full.min.js')}}"></script>
 @endsection
+@push('script_tambahan')
 <script type="text/javascript">
 $(document).ready(function(){
   $('#tambah_sifat').select2({
@@ -119,3 +120,4 @@ var error_cec =0;
 });
 });
 </script>
+@endpush

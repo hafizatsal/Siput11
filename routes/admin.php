@@ -53,6 +53,9 @@ Route::middleware(['auth', 'admin'])
 
         /* ========== LOKASI ========== */
         Route::get('/lokasi', [LokasiController::class, 'index'])->name('admin.lokasi');
+        Route::post('/lokasi/sync', [LokasiController::class, 'sync'])->name('admin.lokasi.sync');
+        Route::get('/lokasi/sync/status', [LokasiController::class, 'syncStatus'])->name('admin.lokasi.sync_status');
+        Route::post('/lokasi/sync/cancel', [LokasiController::class, 'syncCancel'])->name('admin.lokasi.sync_cancel');
         Route::get('/lokasi/kabupaten/{id}', [KabupatenController::class, 'index'])->name('admin.kabupaten');
         Route::get('/lokasi/kabupaten/kecamatan/{id}', [KecamatanController::class, 'index'])->name('admin.kecamatan');
         Route::get('/lokasi/kabupaten/kecamatan/desa/{id}', [DesaController::class, 'index'])->name('admin.desa');

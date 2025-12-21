@@ -215,8 +215,11 @@ div.desc {
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
-  @php($foto = DB::table('foto_user')->where('id_user','=',Auth::user()->id)->first())
-    @php($foto_get = DB::table('foto_user')->where('id_user','=',Auth::user()->id)->get())
+  @php
+    $foto = DB::table('foto_user')->where('id_user', Auth::id())->first();
+    $foto_get = DB::table('foto_user')->where('id_user', Auth::id())->get();
+    $fotoUrl = $foto ? asset('upload/profile/' . $foto->filename) : asset('Admin/dist/img/default-user.png');
+  @endphp
 <div class="wrapper">
 
   <header class="main-header">
@@ -244,13 +247,13 @@ div.desc {
           <!-- User Account: style can be found in dropdown.less -->
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <img src="#" id="img1" class="user-image" alt="User Image">
+              <img src="{{ $fotoUrl }}" id="img1" class="user-image" alt="User Image">
               <span class="hidden-xs">{{ Auth::user()->nama}}</span>
             </a>
             <ul class="dropdown-menu">
               <!-- User image -->
               <li class="user-header">
-                <img src="#" id="img2" class="img-circle" alt="User Image">
+                <img src="{{ $fotoUrl }}" id="img2" class="img-circle" alt="User Image">
 
                 <p>
                   {{ Auth::user()->nama}}
@@ -289,7 +292,7 @@ div.desc {
       <!-- Sidebar user panel -->
       <div class="user-panel">
         <div class="pull-left image">
-          <img src="#" id="img3" class="img-circle" alt="User Image" style="height:50px;">
+          <img src="{{ $fotoUrl }}" id="img3" class="img-circle" alt="User Image" style="height:50px;">
         </div>
         <div class="pull-left info">
           <p>{{ Auth::user()->nama}}</p>
@@ -450,9 +453,10 @@ div.desc {
 <script src="{{asset('Admin/dist/js/demo.js')}}"></script>
 <!-- page script -->
 @yield('script_tambahan')
-<script>
+@stack('script_tambahan')
 @yield('script_table')
-
+@stack('script_table')
+<script>
 $(document).ready(function(){
   @if(count($foto_get)!=0){
     $("#img1").attr("src","{{asset('upload/profile/'. $foto->filename)}}");
@@ -466,6 +470,35 @@ $(document).ready(function(){
   }
   @endif
 
+  setTimeout(function() {
+    $('.alert-dismissible').fadeOut(200);
+  }, 5000);
+
+  var actionTitles = [
+    { selector: '.fa-edit', title: 'Edit' },
+    { selector: '.fa-trash', title: 'Hapus' },
+    { selector: '.fa-search', title: 'Detail' },
+    { selector: '.fa-plus', title: 'Tambah' },
+    { selector: '.fa-fire', title: 'Nilai' },
+    { selector: '.fa-info-circle', title: 'Detail' },
+    { selector: '.fa-balance-scale', title: 'Tertimbang' },
+    { selector: '.fa-bar-chart-o', title: 'Detail Plot' }
+  ];
+
+  function applyTitle($el, title) {
+    if (!$el.attr('title')) {
+      $el.attr('title', title);
+    }
+  }
+
+  actionTitles.forEach(function(item) {
+    $(item.selector).each(function() {
+      var $icon = $(this);
+      var title = item.title;
+      applyTitle($icon, title);
+      applyTitle($icon.closest('a.btn, button.btn'), title);
+    });
+  });
 });
 </script>
 <div class="loading" style="display:none">

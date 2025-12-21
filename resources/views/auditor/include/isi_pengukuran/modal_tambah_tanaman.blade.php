@@ -52,6 +52,7 @@
 @section('script_tambahan')
 <script src="{{asset('Admin/bower_components/select2/dist/js/select2.full.min.js')}}"></script>
 @endsection
+@push('script_tambahan')
 <script type="text/javascript">
 $(document).ready(function(){
   $('#modal_tambah_tanaman').on('show.bs.modal', function(event){
@@ -112,3 +113,4 @@ $('#nama_pohon').select2({
 });
 });
 </script>
+@endpush

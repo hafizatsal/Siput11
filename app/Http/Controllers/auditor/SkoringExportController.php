@@ -30,6 +30,21 @@ class SkoringExportController extends Controller
     {
       $id_data_klaster = $req->nama_data_klaster1;
       $pengukuran_ke=$req->pengukuran_ke;
+
+      $owns_klaster = DB::table('kategori_klaster')
+        ->where(function ($query) {
+          $query->where('input_by', Auth::id())
+            ->orWhere('verif', 1);
+        })
+        ->where(function ($query) use ($id_data_klaster) {
+          $query->where('id_data_klaster', $id_data_klaster)
+            ->orWhere('id_data_klaster2', $id_data_klaster);
+        })
+        ->exists();
+      if (!$owns_klaster) {
+        abort(403, 'Unauthorized');
+      }
+
       $param_vit=$req->param_vit;
       $param_ktk=$req->param_ktk;
       $p_lbds=$req->p_lbds;

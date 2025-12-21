@@ -23,7 +23,10 @@
        <!-- /.modal-dialog -->
      </div>
 
+@push('script_tambahan')
      <script src="{{asset('Admin/modal_ajax.min.js')}}"></script>
+@endpush
+@push('script_tambahan')
        <script type="text/javascript">
 $(document).ready(function(){
        $('#delete_klaster_plot').on('show.bs.modal', function(event){
@@ -34,3 +37,4 @@ $(document).ready(function(){
        });
     });
        </script>
+@endpush

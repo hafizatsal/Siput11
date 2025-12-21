@@ -58,8 +58,9 @@
       </div>
     </div>
 </div>
+@push('script_tambahan')
 <script src="{{asset('Admin/modal_ajax.min.js')}}"></script>
-<script src="{{asset('Admin/bower_components/jquery/dist/jquery.min.js')}}"></script>
+@endpush
 
 @include('auditor.include.profile.modal_edit_profile')
 @endsection

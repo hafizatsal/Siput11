@@ -4,7 +4,6 @@ namespace App\Http\Controllers\user;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
@@ -18,6 +17,37 @@ class SkoringController extends Controller
     public function __construct()
     {
          $this->middleware('auth');
+    }
+
+    private function assertOwnsKlasterPlot($id_klaster_plot)
+    {
+      $owns = DB::table('tbl_klaster_plot')
+        ->leftJoin('kategori_klaster', function ($join) {
+          $join->on('kategori_klaster.id_data_klaster', '=', 'tbl_klaster_plot.id_data_klaster')
+            ->orOn('kategori_klaster.id_data_klaster2', '=', 'tbl_klaster_plot.id_data_klaster');
+        })
+        ->where('tbl_klaster_plot.id_klaster_plot', $id_klaster_plot)
+        ->where('kategori_klaster.input_by', Auth::id())
+        ->exists();
+      if (!$owns) {
+        abort(403, 'Unauthorized');
+      }
+    }
+
+    private function assertOwnsPlot($id_plot)
+    {
+      $owns = DB::table('tbl_plot')
+        ->leftJoin('tbl_klaster_plot', 'tbl_klaster_plot.id_klaster_plot', '=', 'tbl_plot.id_klaster_plot')
+        ->leftJoin('kategori_klaster', function ($join) {
+          $join->on('kategori_klaster.id_data_klaster', '=', 'tbl_klaster_plot.id_data_klaster')
+            ->orOn('kategori_klaster.id_data_klaster2', '=', 'tbl_klaster_plot.id_data_klaster');
+        })
+        ->where('tbl_plot.id_plot', $id_plot)
+        ->where('kategori_klaster.input_by', Auth::id())
+        ->exists();
+      if (!$owns) {
+        abort(403, 'Unauthorized');
+      }
     }
 
     /**
@@ -4515,6 +4545,7 @@ return view('user.nilai.skoring_semua_pengukuran',[
 
     public function detail(Request $req){
       $id=$req->input('id_klaster_plot');
+      $this->assertOwnsKlasterPlot($id);
       $pengukuran_ke = $req->input('pengukuran_ke');
       $p_lbds=$req->p_lbds;
       $p_volume=$req->p_volume;
@@ -5557,6 +5588,7 @@ return view('user.nilai.skoring_semua_pengukuran',[
 
     public function detail_plot(Request $req){
       $id_plot = $req->id_plot;
+      $this->assertOwnsPlot($id_plot);
       $id_klaster = DB::table('tbl_plot')
       ->join('tbl_klaster_plot','tbl_klaster_plot.id_klaster_plot','=','tbl_plot.id_klaster_plot')
       ->where('tbl_plot.id_plot','=',$id_plot)->first();
@@ -5864,7 +5896,7 @@ return view('user.nilai.skoring_semua_pengukuran',[
 
     public function kabupaten_skor(Request $req)
     {
-        $id_prov= Input::get('id_prov');
+        $id_prov = $req->input('id_prov');
         $data_prov=DB::table('lokasi')
         ->join('tbl_klaster_plot','tbl_klaster_plot.id_klaster_plot','=','lokasi.id_klaster_plot')
         ->join('kabupaten','kabupaten.id','=','lokasi.id_kabupaten')
@@ -5878,7 +5910,7 @@ return view('user.nilai.skoring_semua_pengukuran',[
 
     public function kecamatan_skor(Request $req)
     {
-        $id_kab= Input::get('id_kab');
+        $id_kab = $req->input('id_kab');
         $data_kab=DB::table('lokasi')
         ->join('tbl_klaster_plot','tbl_klaster_plot.id_klaster_plot','=','lokasi.id_klaster_plot')
         ->join('kecamatan','kecamatan.id','=','lokasi.id_kecamatan')
@@ -5892,7 +5924,7 @@ return view('user.nilai.skoring_semua_pengukuran',[
 
     public function pengukuran_ke(Request $r)
     {
-      $id_data_klaster=Input::get('id_data_klaster');
+      $id_data_klaster = $r->input('id_data_klaster');
 
       // $dapeng=DB::table('lokasi')
       // ->join('tbl_klaster_plot','tbl_klaster_plot.id_klaster_plot','=','lokasi.id_klaster_plot')

@@ -21,6 +21,92 @@ class DataIndikatorController extends Controller
         $this->middleware('auth');
     }
 
+    private function assertOwnsPengukuran($id_pengukuran)
+    {
+      $owns = DB::table('pengukuran_master')
+        ->join('tbl_plot', 'tbl_plot.id_plot', '=', 'pengukuran_master.id_plot')
+        ->join('tbl_klaster_plot', 'tbl_klaster_plot.id_klaster_plot', '=', 'tbl_plot.id_klaster_plot')
+        ->leftJoin('kategori_klaster', function ($join) {
+          $join->on('kategori_klaster.id_data_klaster', '=', 'tbl_klaster_plot.id_data_klaster')
+            ->orOn('kategori_klaster.id_data_klaster2', '=', 'tbl_klaster_plot.id_data_klaster');
+        })
+        ->where('pengukuran_master.id_pengukuran', $id_pengukuran)
+        ->where('kategori_klaster.input_by', Auth::id())
+        ->exists();
+      if (!$owns) {
+        abort(403, 'Unauthorized');
+      }
+    }
+
+    private function assertOwnsPlot($id_plot)
+    {
+      $owns = DB::table('tbl_plot')
+        ->join('tbl_klaster_plot', 'tbl_klaster_plot.id_klaster_plot', '=', 'tbl_plot.id_klaster_plot')
+        ->leftJoin('kategori_klaster', function ($join) {
+          $join->on('kategori_klaster.id_data_klaster', '=', 'tbl_klaster_plot.id_data_klaster')
+            ->orOn('kategori_klaster.id_data_klaster2', '=', 'tbl_klaster_plot.id_data_klaster');
+        })
+        ->where('tbl_plot.id_plot', $id_plot)
+        ->where('kategori_klaster.input_by', Auth::id())
+        ->exists();
+      if (!$owns) {
+        abort(403, 'Unauthorized');
+      }
+    }
+
+    private function assertOwnsKerusakan($id_kerusakan)
+    {
+      $owns = DB::table('kerusakan_pohon')
+        ->join('pengukuran_master', 'pengukuran_master.id_pengukuran', '=', 'kerusakan_pohon.id_pengukuran')
+        ->join('tbl_plot', 'tbl_plot.id_plot', '=', 'pengukuran_master.id_plot')
+        ->join('tbl_klaster_plot', 'tbl_klaster_plot.id_klaster_plot', '=', 'tbl_plot.id_klaster_plot')
+        ->leftJoin('kategori_klaster', function ($join) {
+          $join->on('kategori_klaster.id_data_klaster', '=', 'tbl_klaster_plot.id_data_klaster')
+            ->orOn('kategori_klaster.id_data_klaster2', '=', 'tbl_klaster_plot.id_data_klaster');
+        })
+        ->where('kerusakan_pohon.id', $id_kerusakan)
+        ->where('kategori_klaster.input_by', Auth::id())
+        ->exists();
+      if (!$owns) {
+        abort(403, 'Unauthorized');
+      }
+    }
+
+    private function assertOwnsTajuk($id_tajuk)
+    {
+      $owns = DB::table('kondisi_tajuk')
+        ->join('pengukuran_master', 'pengukuran_master.id_pengukuran', '=', 'kondisi_tajuk.id_pengukuran')
+        ->join('tbl_plot', 'tbl_plot.id_plot', '=', 'pengukuran_master.id_plot')
+        ->join('tbl_klaster_plot', 'tbl_klaster_plot.id_klaster_plot', '=', 'tbl_plot.id_klaster_plot')
+        ->leftJoin('kategori_klaster', function ($join) {
+          $join->on('kategori_klaster.id_data_klaster', '=', 'tbl_klaster_plot.id_data_klaster')
+            ->orOn('kategori_klaster.id_data_klaster2', '=', 'tbl_klaster_plot.id_data_klaster');
+        })
+        ->where('kondisi_tajuk.id', $id_tajuk)
+        ->where('kategori_klaster.input_by', Auth::id())
+        ->exists();
+      if (!$owns) {
+        abort(403, 'Unauthorized');
+      }
+    }
+
+    private function assertOwnsKtkFisik($id_ktk)
+    {
+      $owns = DB::table('ktk_fisika')
+        ->join('tbl_plot', 'tbl_plot.id_plot', '=', 'ktk_fisika.kode_plot')
+        ->join('tbl_klaster_plot', 'tbl_klaster_plot.id_klaster_plot', '=', 'tbl_plot.id_klaster_plot')
+        ->leftJoin('kategori_klaster', function ($join) {
+          $join->on('kategori_klaster.id_data_klaster', '=', 'tbl_klaster_plot.id_data_klaster')
+            ->orOn('kategori_klaster.id_data_klaster2', '=', 'tbl_klaster_plot.id_data_klaster');
+        })
+        ->where('ktk_fisika.id_ktk', $id_ktk)
+        ->where('kategori_klaster.input_by', Auth::id())
+        ->exists();
+      if (!$owns) {
+        abort(403, 'Unauthorized');
+      }
+    }
+
     /**
      * Show the application dashboard.
      *
@@ -78,6 +164,7 @@ class DataIndikatorController extends Controller
     public function dataIndikator($id)
     {
       $id=decrypt($id);
+      $this->assertOwnsPengukuran($id);
       $data_pengukuran=DB::table('pengukuran_master')
       ->join('tbl_plot','tbl_plot.id_plot','=','pengukuran_master.id_plot')
       ->where('pengukuran_master.id_pengukuran','=',$id)
@@ -95,6 +182,7 @@ class DataIndikatorController extends Controller
     public function paramBiodiversitas($id)
     {
       $id=decrypt($id);
+      $this->assertOwnsPengukuran($id);
       $data_pengukuran=DB::table('pengukuran_master')
       ->join('tbl_plot','tbl_plot.id_plot','=','pengukuran_master.id_plot')
       ->where('pengukuran_master.id_pengukuran','=',$id)
@@ -112,6 +200,7 @@ class DataIndikatorController extends Controller
     public function paramProduktivitas($id)
     {
       $id=decrypt($id);
+      $this->assertOwnsPengukuran($id);
       $data_pengukuran=DB::table('pengukuran_master')
       ->join('tbl_plot','tbl_plot.id_plot','=','pengukuran_master.id_plot')
       ->where('pengukuran_master.id_pengukuran','=',$id)
@@ -129,6 +218,7 @@ class DataIndikatorController extends Controller
     public function paramVitalitas($id)
     {
       $id=decrypt($id);
+      $this->assertOwnsPengukuran($id);
       $data_pengukuran=DB::table('pengukuran_master')
       ->join('tbl_plot','tbl_plot.id_plot','=','pengukuran_master.id_plot')
       ->where('pengukuran_master.id_pengukuran','=',$id)
@@ -146,6 +236,7 @@ class DataIndikatorController extends Controller
     public function paramKtk($id)
     {
       $id=decrypt($id);
+      $this->assertOwnsPengukuran($id);
       $data_pengukuran=DB::table('pengukuran_master')
       ->join('tbl_plot','tbl_plot.id_plot','=','pengukuran_master.id_plot')
       ->where('pengukuran_master.id_pengukuran','=',$id)
@@ -163,6 +254,7 @@ class DataIndikatorController extends Controller
     public function biodivPohon($id)
     {
       $id=decrypt($id);
+        $this->assertOwnsPengukuran($id);
         $data_pengukuran=DB::table('pengukuran_master')
         ->leftjoin('tbl_plot','tbl_plot.id_plot','=','pengukuran_master.id_plot')
         ->leftjoin('tbl_klaster_plot','tbl_klaster_plot.id_klaster_plot','tbl_plot.id_klaster_plot')
@@ -261,6 +353,7 @@ class DataIndikatorController extends Controller
     public function biodivFauna($id)
     {
       $id=decrypt($id);
+      $this->assertOwnsPengukuran($id);
       $data_pengukuran=DB::table('pengukuran_master')
       ->leftjoin('tbl_plot','tbl_plot.id_plot','=','pengukuran_master.id_plot')
       ->leftjoin('tbl_klaster_plot','tbl_klaster_plot.id_klaster_plot','tbl_plot.id_klaster_plot')
@@ -359,6 +452,7 @@ class DataIndikatorController extends Controller
       $id=$req->input('pengukuranke');
       $id_plot_p =  $req->input('nama_plot');
       $param=$req->nama_parameter;
+      $this->assertOwnsPlot($id_plot_p);
       if($param==1){
         $data_pengukuran=DB::table('pengukuran_master')
         ->leftjoin('tbl_plot','tbl_plot.id_plot','=','pengukuran_master.id_plot')
@@ -1201,6 +1295,7 @@ class DataIndikatorController extends Controller
     public function kimia($id)
     {
       $id=decrypt($id);
+        $this->assertOwnsPengukuran($id);
         $data_pengukuran=DB::table('pengukuran_master')
         ->leftjoin('tbl_plot','tbl_plot.id_plot','=','pengukuran_master.id_plot')
         ->leftjoin('tbl_klaster_plot','tbl_klaster_plot.id_klaster_plot','tbl_plot.id_klaster_plot')
@@ -1283,6 +1378,7 @@ class DataIndikatorController extends Controller
     public function fisika($id)
     {
       $id=decrypt($id);
+        $this->assertOwnsPengukuran($id);
         $data_pengukuran=DB::table('pengukuran_master')
         ->leftjoin('tbl_plot','tbl_plot.id_plot','=','pengukuran_master.id_plot')
         ->leftjoin('tbl_klaster_plot','tbl_klaster_plot.id_klaster_plot','tbl_plot.id_klaster_plot')
@@ -1416,6 +1512,7 @@ class DataIndikatorController extends Controller
       $id=$req->input('pengukuranke');
       $id_plot_p =  $req->input('nama_plot');
       $param=$req->input('nama_parameter');
+      $this->assertOwnsPlot($id_plot_p);
       if($param==2){
         $data_pengukuran=DB::table('pengukuran_master')
         ->leftjoin('tbl_plot','tbl_plot.id_plot','=','pengukuran_master.id_plot')
@@ -1634,6 +1731,7 @@ class DataIndikatorController extends Controller
     public function delete_kerusakan(Request $req){
       try{
         $id = $req->hapus_id;
+        $this->assertOwnsKerusakan($id);
         DB::table('kerusakan_pohon')->where('id', $id)->delete();
         session()->flash('delete', 'Data berhasil dihapus.');
 
@@ -1647,6 +1745,7 @@ class DataIndikatorController extends Controller
     public function delete_kerusakan_all(Request $req){
       try{
         $id = $req->hapus_id_all;
+        $this->assertOwnsPengukuran($id);
         DB::table('kerusakan_pohon')->where('id_pengukuran', $id)->delete();
         session()->flash('delete', 'Semua data berhasil dihapus.');
 
@@ -1660,6 +1759,7 @@ class DataIndikatorController extends Controller
     public function delete_tajuk(Request $req){
       try{
         $id = $req->hapus_id;
+        $this->assertOwnsTajuk($id);
         DB::table('kondisi_tajuk')->where('id', $id)->delete();
         session()->flash('delete', 'Data berhasil dihapus.');
 
@@ -1673,6 +1773,7 @@ class DataIndikatorController extends Controller
     public function delete_tajuk_all(Request $req){
       try{
         $id = $req->hapus_id_all;
+        $this->assertOwnsPengukuran($id);
         DB::table('kondisi_tajuk')->where('id_pengukuran', $id)->delete();
         session()->flash('delete', 'Semua data berhasil dihapus.');
 
@@ -1685,6 +1786,7 @@ class DataIndikatorController extends Controller
 
     public function jsonFisik(Request $req){
       $id_ktk = $req->id;
+      $this->assertOwnsKtkFisik($id_ktk);
 
       $sifat_fisik=DB::table('ktk_fisika')
       ->where('id_ktk','=',$id_ktk)->get();

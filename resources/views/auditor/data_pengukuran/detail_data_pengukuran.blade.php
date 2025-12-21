@@ -145,8 +145,9 @@
     <!-- /.col -->
   </div>
   <!-- /.row -->
+@push('script_tambahan')
   <script src="{{asset('Admin/modal_ajax.min.js')}}"></script>
-  <script src="{{asset('Admin/bower_components/jquery/dist/jquery.min.js')}}"></script>
+@endpush
    <!-- /.content -->
    {{-- include modal --}}
    @include('user.include.data_pengukuran_plot.edit_pengukuran')
@@ -158,6 +159,7 @@
 <script src="{{asset('Admin/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js')}}"></script>
 @endsection
 
+@push('script_tambahan')
 <script type="text/javascript">
 $( document ).ready(function() {
  $('#datepicker').datepicker({
@@ -173,5 +175,6 @@ $( document ).ready(function() {
  });
 
 </script>
+@endpush
 
   @endsection

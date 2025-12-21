@@ -35,6 +35,20 @@ class SkoringControllerNew extends Controller
        $id_data_klaster = $req->tahun_pengukuran; // id kategori klaster
        $pengukuran_ke=$req->pengukuranke; // pengukuran ke
 
+       $owns_klaster = DB::table('kategori_klaster')
+         ->where(function ($query) {
+           $query->where('input_by', Auth::id())
+             ->orWhere('verif', 1);
+         })
+         ->where(function ($query) use ($id_data_klaster) {
+           $query->where('id_data_klaster', $id_data_klaster)
+             ->orWhere('id_data_klaster2', $id_data_klaster);
+         })
+         ->exists();
+       if (!$owns_klaster) {
+         abort(403, 'Unauthorized');
+       }
+
        // parameter
        $p_lbds=$req->lbds;
        $p_volume=$req->volume;

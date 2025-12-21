@@ -110,8 +110,8 @@
         <li class="header">PANEL UTAMA</li>
 
         <li class="@yield('active_home')"><a href="{{route('home')}}"><i class="fa fa-home"></i> <span>Home</span></a></li>
-          <li class="@yield('active_pengukuran')"><a href="{{route('data_pengukuran')}}"><i class="fa fa-book"></i> <span>Data Pengukuran</span></a></li>
-          <li class="@yield('active_skoring')"><a href="{{route('skoring_kesehatan_hutan')}}"><i class="fa fa-book"></i> <span>Penilaian</span></a></li>
+          <li class="@yield('active_pengukuran')"><a href="{{route('user.data_pengukuranplot')}}"><i class="fa fa-book"></i> <span>Data Pengukuran</span></a></li>
+          <li class="@yield('active_skoring')"><a href="{{route('user.penilaian_klaster')}}"><i class="fa fa-book"></i> <span>Penilaian</span></a></li>
 
 
 

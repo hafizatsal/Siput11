@@ -38,8 +38,13 @@ class PohonController extends Controller
   {
     // fungsi ini digunakan untuk menambahkan data pohon
     // id dibuat otomatis autoincrement
-    $nama_pohon = $req->input('nama_pohon');
-    $nama_latin = $req->input('nama_latin_pohon');
+    $req->validate([
+      'nama_pohon' => 'required|string|max:255',
+      'nama_latin_pohon' => 'required|string|max:255',
+    ]);
+
+    $nama_pohon = trim($req->input('nama_pohon'));
+    $nama_latin = trim($req->input('nama_latin_pohon'));
     // menyimpan data pohon ke dalam array
     $data_pohon = array(
       'nama_tanaman' => $nama_pohon,
@@ -58,9 +63,15 @@ class PohonController extends Controller
 
   public function update(Request $req)
   {
+    $req->validate([
+      'id_pohon2' => 'required|integer',
+      'nama_pohon2' => 'required|string|max:255',
+      'nama_latin_pohon2' => 'required|string|max:255',
+    ]);
+
     $id_pohon = $req->input('id_pohon2');
-    $nama_pohon = $req->input('nama_pohon2');
-    $nama_latin = $req->input('nama_latin_pohon2');
+    $nama_pohon = trim($req->input('nama_pohon2'));
+    $nama_latin = trim($req->input('nama_latin_pohon2'));
 
     // menyimpan data pohon
     $data_pohon = array(

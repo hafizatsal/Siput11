@@ -552,9 +552,8 @@
     <script src="{{ asset('Admin/dist/js/demo.js') }}"></script>
     <!-- page script -->
     @yield('script_tambahan')
+    @yield('script_table')
     <script>
-        @yield('script_table')
-
         $(document).ready(function() {
             @if (count($foto_get) != 0)
                 {
@@ -570,6 +569,35 @@
                 }
             @endif
 
+            setTimeout(function() {
+                $('.alert-dismissible').fadeOut(200);
+            }, 5000);
+
+            var actionTitles = [
+                { selector: '.fa-edit', title: 'Edit' },
+                { selector: '.fa-trash', title: 'Hapus' },
+                { selector: '.fa-search', title: 'Detail' },
+                { selector: '.fa-plus', title: 'Tambah' },
+                { selector: '.fa-fire', title: 'Nilai' },
+                { selector: '.fa-info-circle', title: 'Detail' },
+                { selector: '.fa-balance-scale', title: 'Tertimbang' },
+                { selector: '.fa-bar-chart-o', title: 'Detail Plot' }
+            ];
+
+            function applyTitle($el, title) {
+                if (!$el.attr('title')) {
+                    $el.attr('title', title);
+                }
+            }
+
+            actionTitles.forEach(function(item) {
+                $(item.selector).each(function() {
+                    var $icon = $(this);
+                    var title = item.title;
+                    applyTitle($icon, title);
+                    applyTitle($icon.closest('a.btn, button.btn'), title);
+                });
+            });
         });
     </script>
     <div class="loading" style="display:none">

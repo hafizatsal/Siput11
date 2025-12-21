@@ -3,7 +3,7 @@
 @section('css')
 @endsection
 @section('active_plot_ukur','active')
-@section('active_plot','active')
+@section('active_data_plot','active')
 @section('breadcrumb')
 <li><a href="#">Data Plot</a></li>
 @endsection
@@ -79,9 +79,11 @@
 
 @endsection
 
+@push('script_tambahan')
 <script src="{{asset('Admin/modal_ajax.min.js')}}"></script>
-<script src="{{asset('Admin/bower_components/jquery/dist/jquery.min.js')}}"></script>
+@endpush
 
+@push('script_tambahan')
 <script type="text/javascript">
 $(document).ready(function(){
 
@@ -225,3 +227,4 @@ $(document).ready(function(){
 
 });
 </script>
+@endpush

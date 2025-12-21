@@ -77,7 +77,7 @@
                       <div class="col-md-9 col-sm-9 col-xs-12">
                         <select required class="form-control" name="nama_parameter" id="nama_parameter">
                           <option value="">Pilih Parameter</option>
-                          <option value="1">Sifat Fisik</option>
+                          <option value="1">Sifat Fisika</option>
                           <option value="2">Sifat Kimia</option>
                         </select>
                       </div>
@@ -98,9 +98,11 @@
 @section('data_table')
 <script src="{{asset('Admin/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js')}}"></script>
 @endsection
+@push('script_tambahan')
 <script src="{{asset('Admin/modal_ajax.min.js')}}"></script>
-<script src="{{asset('Admin/bower_components/jquery/dist/jquery.min.js')}}"></script>
+@endpush
 
+@push('script_tambahan')
 <script type="text/javascript">
 $(document).ready(function(){
 
@@ -290,3 +292,4 @@ $(document).ready(function(){
 
 });
 </script>
+@endpush

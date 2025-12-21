@@ -10,7 +10,7 @@
    </style>
 @endsection
 @section('active_plot_ukur','active')
-@section('active_plot','active')
+@section('active_data_plot','active')
 @section('breadcrumb')
 <li><a href="{{route('auditor.data_klaster')}}">Data Klaster</a></li>
 <li><a href="{{route('auditor.klaster_plot',encrypt($id_data_klaster2))}}">Data Klaster Plot</a></li>
@@ -202,8 +202,9 @@
 
 </div>
 
+@push('script_tambahan')
   <script src="{{asset('Admin/modal_ajax.min.js')}}"></script>
-  <script src="{{asset('Admin/bower_components/jquery/dist/jquery.min.js')}}"></script>
+@endpush
    <!-- /.content -->
 
 @section('data_table')
@@ -212,10 +213,13 @@
 <script src="{{asset('Admin/bower_components/datatables.net/js/jquery.dataTables.min.js')}}"></script>
 <script src="{{asset('Admin/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js')}}"></script>
 @endsection
+@push('script_tambahan')
 <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
   integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
   crossorigin=""></script>
+@endpush
 
+@push('script_tambahan')
 <script type="text/javascript">
 
 var satelite = L.tileLayer('http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}',{
@@ -258,6 +262,7 @@ $( document ).ready(function() {
  });
 
 </script>
+@endpush
 
    @section('script_table')
    <script>

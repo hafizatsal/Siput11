@@ -3,7 +3,7 @@
 @section('active_data_pengukuran','active')
 @section('active_kualitas_tapak','active')
 @section('breadcrumb')
-<li><a href="#">Kualitas Tapak Fisik</a></li>
+<li><a href="#">Kualitas Tapak Fisika</a></li>
 @endsection
 @section('main_section')
 
@@ -30,8 +30,12 @@
              @php($no++)
              @endforeach
            </select>
-            </td>
+           </td>
            </tr>
+          <tr>
+            <td>Plot Aktif</td>
+            <td> : {{ $data_pengukuran->nama_plot ?? '-' }} (Pengukuran ke-{{ $data_pengukuran->pengukuran_ke ?? '-' }})</td>
+          </tr>
          </tbody>
          <tfoot>
 
@@ -81,7 +85,7 @@
   <div class="col-xs-12 table">
     <div class="box">
         <div class="box-header">
-          <h3>Data Kualitas Tapak (Fisik)
+          <h3>Data Kualitas Tapak (Fisika)
           </h3>
           <h4>
             <a class="btn btn-success btn-xs" href="{{route('auditor.lbds', encrypt($id))}}">Pertumbuhan</a>
@@ -90,7 +94,7 @@
             <a class="btn btn-primary btn-xs" href="{{route('auditor.bio_pohon',encrypt($id))}}">Biodiversitas Pohon</a>
             <a class="btn btn-primary btn-xs" href="{{route('auditor.bio_fauna',encrypt($id))}}">Biodiversitas Fauna</a>
             <a class="btn btn-info btn-xs" href="{{route('auditor.kimia',encrypt($id))}}">Kualitas Tapak (Kimia)</a>
-            <a class="btn btn-info btn-xs" href="">Kualitas Tapak (Fisik)</a>
+            <a class="btn btn-info btn-xs" href="">Kualitas Tapak (Fisika)</a>
         </h4>
         </div>
         <!-- /.box-header -->
@@ -138,8 +142,9 @@
   </div>
 </div>
 
+@push('script_tambahan')
 <script src="{{asset('Admin/modal_ajax.min.js')}}"></script>
-<script src="{{asset('Admin/bower_components/jquery/dist/jquery.min.js')}}"></script>
+@endpush
 
 {{-- include modal --}}
 @include('auditor.include.isi_pengukuran.modal_detail')

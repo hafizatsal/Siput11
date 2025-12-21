@@ -46,6 +46,7 @@
 </div>
 <!-- /.modal -->
 
+@push('script_tambahan')
 <script type="text/javascript">
 $(document).ready(function(){
 $('#modal_edit_foto').on('show.bs.modal', function(event){
@@ -76,3 +77,4 @@ $('#modal_edit_foto').on('show.bs.modal', function(event){
 });
 });
 </script>
+@endpush

@@ -182,6 +182,7 @@
 </div>
 
 {{-- ==================== AJAX SCRIPT ==================== --}}
+@push('script_tambahan')
 <script>
     // AJAX Jenis → Fungsi
     $('#jenis').on('change', function() {
@@ -230,3 +231,4 @@
         });
     });
 </script>
+@endpush

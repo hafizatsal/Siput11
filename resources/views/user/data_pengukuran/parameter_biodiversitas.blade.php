@@ -64,6 +64,8 @@
 <script src="{{asset('Admin/bower_components/jquery/dist/jquery.min.js')}}"></script>
   <!-- jquery untuk mengatur datatable -->
    @section('script_table')
+  <script>
+
    $(function () {
      $('#data_klaster').DataTable({
        'paging'      : true,
@@ -91,6 +93,9 @@
        }
      })
    })
-   @endsection
+   
+  </script>
+@endsection
 
   @endsection
+

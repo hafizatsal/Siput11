@@ -33,6 +33,19 @@ class LbdsController extends Controller
         $pengukuran_ke      = $req->input('import_pengukuran_ke');
         $id_plot_pengukuran = $req->input('import_id_plot');
 
+        $owns_plot = DB::table('tbl_plot')
+            ->join('tbl_klaster_plot', 'tbl_klaster_plot.id_klaster_plot', '=', 'tbl_plot.id_klaster_plot')
+            ->leftJoin('kategori_klaster', function ($join) {
+                $join->on('kategori_klaster.id_data_klaster', '=', 'tbl_klaster_plot.id_data_klaster')
+                    ->orOn('kategori_klaster.id_data_klaster2', '=', 'tbl_klaster_plot.id_data_klaster');
+            })
+            ->where('tbl_plot.id_plot', $id_plot_pengukuran)
+            ->where('kategori_klaster.input_by', Auth::id())
+            ->exists();
+        if (!$owns_plot) {
+            abort(403, 'Unauthorized');
+        }
+
         // cek info plot
         $id_plot = DB::table('tbl_plot')->where('id_plot',$id_plot_pengukuran)->first();
         if(!$id_plot){

@@ -23,6 +23,7 @@
        <!-- /.modal-dialog -->
      </div>
 
+@push('script_tambahan')
        <script type="text/javascript">
 $(document).ready(function(){
        $('#modal_delete_ktk').on('show.bs.modal', function(event){
@@ -34,3 +35,4 @@ $(document).ready(function(){
        });
     });
        </script>
+@endpush

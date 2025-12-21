@@ -100,8 +100,9 @@
    <!-- /.content -->
 
 
+@push('script_tambahan')
    <script src="{{asset('Admin/modal_ajax.min.js')}}"></script>
-   <script src="{{asset('Admin/bower_components/jquery/dist/jquery.min.js')}}"></script>
+@endpush
    {{-- include modal --}}
    @include('auditor.include.nilai_tertimbang.modal-edit-nt')
 

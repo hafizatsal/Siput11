@@ -28,8 +28,12 @@
              @php($no++)
              @endforeach
            </select>
-            </td>
+           </td>
            </tr>
+          <tr>
+            <td>Plot Aktif</td>
+            <td> : {{ $data_pengukuran->nama_plot ?? '-' }} (Pengukuran ke-{{ $data_pengukuran->pengukuran_ke ?? '-' }})</td>
+          </tr>
          </tbody>
          <tfoot>
 
@@ -54,7 +58,7 @@
       <a class="btn btn-primary btn-xs" href="{{route('auditor.bio_pohon',encrypt($id))}}">Biodiversitas Pohon</a>
       <a class="btn btn-primary btn-xs" href="">Biodiversitas Fauna</a>
       <a class="btn btn-info btn-xs" href="{{route('auditor.kimia',encrypt($id))}}">Kualitas Tapak (Kimia)</a>
-      <a class="btn btn-info btn-xs" href="{{route('auditor.fisika',encrypt($id))}}">Kualitas Tapak (Fisik)</a>
+      <a class="btn btn-info btn-xs" href="{{route('auditor.fisika',encrypt($id))}}">Kualitas Tapak (Fisika)</a>
   </h4>
      </div>
      <div class="box-body">
@@ -94,8 +98,9 @@
 </div>
 </div>
 
+@push('script_tambahan')
 <script src="{{asset('Admin/modal_ajax.min.js')}}"></script>
-<script src="{{asset('Admin/bower_components/jquery/dist/jquery.min.js')}}"></script>
+@endpush
 
 {{-- include modal --}}
 @include('user.include.isi_pengukuran.modal_detail')
@@ -115,12 +120,14 @@
 <script src="{{asset('Admin/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js')}}"></script>
 @endsection
 
+@push('script_tambahan')
 <script type="text/javascript">
 $(document).ready(function() {
 
 
  });
 </script>
+@endpush
 
    @section('script_table')
    <script>

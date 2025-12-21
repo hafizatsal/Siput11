@@ -38,6 +38,7 @@
   <!-- /.modal-dialog -->
 </div>
 <!-- /.modal -->
+@push('script_tambahan')
 <script type="text/javascript">
 $(document).ready(function(){
   $('#modal_edit_profile').on('show.bs.modal', function(event){
@@ -45,3 +46,4 @@ $(document).ready(function(){
   });
 });
 </script>
+@endpush

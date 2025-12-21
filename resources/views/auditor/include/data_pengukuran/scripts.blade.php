@@ -1,12 +1,36 @@
+@push('script_tambahan')
 <script src="https://code.jquery.com/jquery-3.7.0.js" integrity="sha384-ogycHROOTGA//2Q8YUfjz1Sr7xMOJTUmY2ucsPVuXAg4CtpgQJQzGZsX768KqetU" crossorigin="anonymous"></script>
+@endpush
+@push('script_tambahan')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.js" integrity="sha384-w52cgKJL63XVo8/Wwyl+z8ly0lI51gzCtqADl8pHQTXUXkF08iRa7D+sjSmCyHp+" crossorigin="anonymous"></script>
+@endpush
+@push('script_tambahan')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.js" integrity="sha384-P2rohseTZr3+/y/u+6xaOAE3CIkcmmC0e7ZjhdkTilUMHfNHCerfVR9KICPeFMOP" crossorigin="anonymous"></script>
+@endpush
+@push('script_tambahan')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js" integrity="sha384-/RlQG9uf0M2vcTw3CX7fbqgbj/h8wKxw7C3zu9/GxcBPRKOEcESxaxufwRXqzq6n" crossorigin="anonymous"></script>
+@endpush
+@push('script_tambahan')
 <script src="https://cdn.datatables.net/2.3.5/js/dataTables.js" integrity="sha384-/JORYWDk6F/SvOM/lLxtVVRQanR9mF8OmN4mBPwpeicZGC/jGSlDTNKMNDeHWnVM" crossorigin="anonymous"></script>
+@endpush
+@push('script_tambahan')
 <script src="https://cdn.datatables.net/2.3.5/js/dataTables.bootstrap.js" integrity="sha384-TvE0TyNGVUqqsRnOwzEdbwJ4Di+e/A1v+pjKi+XcwlDxGp5CT42XFybYBHNALZeO" crossorigin="anonymous"></script>
+@endpush
+@push('script_tambahan')
 <script src="https://cdn.datatables.net/buttons/3.2.5/js/dataTables.buttons.js" integrity="sha384-SyOBgiETMg1CpC29RFM/2e0S+rlVmbftfSjVTeG22H8ihiIwugfxQTWJ0dkEuqc7" crossorigin="anonymous"></script>
+@endpush
+@push('script_tambahan')
 <script src="https://cdn.datatables.net/buttons/3.2.5/js/buttons.bootstrap.js" integrity="sha384-rFDzpN0XLCZGJcCjfxPLhThf6FulX+pARMmeAFu62rNVavZxfkh9mN8/CjBz0ytm" crossorigin="anonymous"></script>
+@endpush
+@push('script_tambahan')
 <script src="https://cdn.datatables.net/buttons/3.2.5/js/buttons.html5.js" integrity="sha384-FWBlOAPJ9FRQJgtP00zQNtd1wuox/BRlVTkHuOojgy2TQl+opJzVx4GhRlbaPLhB" crossorigin="anonymous"></script>
+@endpush
+@push('script_tambahan')
 <script src="https://cdn.datatables.net/buttons/3.2.5/js/buttons.print.js" integrity="sha384-LbFUMCazrGiuf4Z4oi2HrQJ8m+YVatlOZ7fl/yPPMlcHX+ya9tg6M4IBwDxcbMjS" crossorigin="anonymous"></script>
+@endpush
+@push('script_tambahan')
 <script src="https://cdn.datatables.net/responsive/3.0.7/js/dataTables.responsive.js" integrity="sha384-vVealWQwusW7xpCxT5a1xFzPAmskqmgoxBm8X4rB/ssViRDEeY1YuPdIjz04vjbY" crossorigin="anonymous"></script>
+@endpush
+@push('script_tambahan')
 <script src="https://cdn.datatables.net/responsive/3.0.7/js/responsive.bootstrap.js" integrity="sha384-d0eau1SJ12oqTab+A7KBKjhRxuIfubh62VdDVj0JFXd5wC6LuJRCt9R9Cev0z6Y9" crossorigin="anonymous"></script>
+@endpush

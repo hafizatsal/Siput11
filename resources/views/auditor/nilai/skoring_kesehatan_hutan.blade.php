@@ -63,7 +63,7 @@
 <div class="box box-info">
   <div class="box-header with-border">
     <h3 class="box-title"><b>Nilai Kesehatan Hutan</b></h3>
-      <form id="skor_akhir" method="post" class="" action="{{route('/penilaian/kesehatan_auditor')}}">
+      <form id="skor_akhir" method="post" class="" action="{{route('auditor.penilaian.kesehatan')}}">
         {{csrf_field()}}
         <input type="hidden" id="nama_data_klaster1" name="nama_data_klaster1" value="{{$id_data_klaster}}">
         <input type="hidden" id="pengukuran_ke" name="pengukuran_ke" value="{{$pengukuran_ke}}">
@@ -87,7 +87,7 @@
   <div class="box-body">
       <table id="nilai_kesehatan" class="table table-bordered table-striped">
         <div class="box-tools pull-right">
-          <form class="" action="{{route('/penilaian/klaster_export_auditor')}}" method="POST">
+          <form class="" action="{{route('auditor.penilaian.klaster.export')}}" method="POST">
             {{ csrf_field() }}
             <input type="hidden" id="nama_data_klaster1" name="nama_data_klaster1" value="{{$id_data_klaster}}">
             <input type="hidden" id="pengukuran_ke" name="pengukuran_ke" value="{{$pengukuran_ke}}">
@@ -200,7 +200,7 @@
               @if($nilai_skor[$i]=="Buruk")<span class='label label-danger'>O</span>@endif
             </td>
             <td style="text-align: center; vertical-align: middle">
-              <form id="detail{{$i}}" method="post" class="" action="{{route('/penilaian/kesehatan_auditor/detail')}}">
+              <form id="detail{{$i}}" method="post" class="" action="{{route('auditor.penilaian.kesehatan.detail')}}">
                 {{csrf_field()}}
                 <input type="hidden" id="pengukuran_ke" name="pengukuran_ke" value="{{$pengukuran_ke}}">
                 <input type="hidden" id="id_klaster_plot" name="id_klaster_plot" value="{{$value->id_klaster_plot}}">
@@ -954,19 +954,29 @@
 <script src="{{asset('Admin/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js')}}"></script>
 <script src="{{asset('Admin/cdn/table-responsive.min.js')}}"></script>
 @endsection
-<script src="{{asset('Admin/bower_components/jquery/dist/jquery.min.js')}}"></script>
+@push('script_tambahan')
 <script src="{{ asset ('js/chart.min.js') }}"></script>
+@endpush
+@push('script_tambahan')
 <script src="{{ asset ('js/Chart.js') }}"></script>
+@endpush
+@push('script_tambahan')
 <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
   integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
   crossorigin=""></script>
+@endpush
+@push('script_tambahan')
 <script src="https://unpkg.com/esri-leaflet@2.2.4/dist/esri-leaflet.js"
   integrity="sha512-tyPum7h2h36X52O2gz+Pe8z/3l+Y9S1yEUscbVs5r5aEY5dFmP1WWRY/WLLElnFHa+k1JBQZSCDGwEAnm2IxAQ=="
   crossorigin=""></script>
+@endpush
+@push('script_tambahan')
 <script src="https://unpkg.com/esri-leaflet-geocoder@2.2.13/dist/esri-leaflet-geocoder.js"
   integrity="sha512-zdT4Pc2tIrc6uoYly2Wp8jh6EPEWaveqqD3sT0lf5yei19BC1WulGuh5CesB0ldBKZieKGD7Qyf/G0jdSe016A=="
   crossorigin=""></script>
+@endpush
 
+@push('script_tambahan')
 <script type="text/javascript">
 <?php if($jumlah_penilaian>1){ ?>
 var densityCanvas = document.getElementById("densityChart");
@@ -1142,8 +1152,10 @@ $(document).ready(function(){
 });
 
 </script>
+@endpush
   @section('script_table')
-   $(function () {
+<script>
+$(function () {
      var table = $('#nilai_kesehatan').DataTable({
        'responsive'  : true,
        'paging'      : true,
@@ -1276,5 +1288,8 @@ $(document).ready(function(){
            .responsive.recalc();
      });
    })
-   @endsection
+   
+</script>@endsection
 @endsection
+
+

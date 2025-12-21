@@ -35,6 +35,7 @@
 </div>
 <!-- /.modal -->
 
+@push('script_tambahan')
 <script type="text/javascript">
 $(document).ready(function() {
   $('#modal_import_pohon').on('show.bs.modal', function(event){
@@ -42,3 +43,4 @@ $(document).ready(function() {
   });
 });
 </script>
+@endpush

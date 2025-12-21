@@ -1,7 +1,7 @@
 @extends('layouts.layoutauditor')
 @section('title','Halaman Klaster')
 @section('active_plot_ukur','active')
-@section('active_klaster','active')
+@section('active_data_klaster_plot','active')
 @section('judul_halaman','Halaman Detail Klaster')
 @section('css')
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
@@ -187,7 +187,7 @@
 
               <td style="text-align: center; vertical-align: middle">
                 <a class="btn btn-warning btn-md" data-plotid={{$p->id_plot}} data-nama_plot="{{$p->nama_plot}}" data-koorlintang="{{$lintang_masked[$id]}}" data-koorbujur="{{$bujur_masked[$id]}}" data-toggle="modal" data-target="#edit-plot" href="#"><i class="fa fa-edit"></i></a>
-                <a class="btn btn-success btn-md" href="{{ route('auditor.plot.lihat_plot', encrypt($p->id_plot))}}"><i class="fa fa-bar-chart-o"></i></a>
+                <a class="btn btn-success btn-md" href="{{ route('auditor.plot.lihat_plot', encrypt($p->id_plot))}}"><i class="fa fa-info-circle"></i></a>
               </td>
             </tr>
             @php($id++)
@@ -271,8 +271,9 @@
 
 </div>
 
+@push('script_tambahan')
 <script src="{{asset('Admin/modal_ajax.min.js')}}"></script>
-<script src="{{asset('Admin/bower_components/jquery/dist/jquery.min.js')}}"></script>
+@endpush
   @include('auditor.include.detail_klaster_plot.modal-edit-plot')
 
   @section('data_table')
@@ -280,9 +281,12 @@
   <script src="{{asset('Admin/bower_components/datatables.net/js/jquery.dataTables.min.js')}}"></script>
   <script src="{{asset('Admin/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js')}}"></script>
   @endsection
+@push('script_tambahan')
   <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
     integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
     crossorigin=""></script>
+@endpush
+@push('script_tambahan')
   <script>
   var PointIcon = L.Icon.extend({
       options: {
@@ -370,10 +374,12 @@ var bounds = Array();
 polyline = L.polyline(latlngs, {color: 'red'}).addTo(mymap);
 mymap.fitBounds(bounds);
   </script>
+@endpush
 
   <!-- jquery untuk mengatur datatable -->
    @section('script_table')
-   $(function () {
+<script>
+$(function () {
      $('#biodiv_shannon_wiener').DataTable({
        'paging'      : true,
        'lengthChange': true,
@@ -396,6 +402,7 @@ mymap.fitBounds(bounds);
        'lengthMenu'  : [[5,10,20],[5,10,20]]
      })
    })
-   @endsection
+   
+</script>@endsection
 
 @endsection

@@ -3,7 +3,7 @@
 @section('active_data_pengukuran','active')
 @section('active_pengukuran_plot','active')
 @section('breadcrumb')
-{{-- <li><a href="{{ route('klaster/data_klaster/detail', encrypt($id_klaster_plot)) }}">Detail Klaster</a></li> --}}
+{{-- <li><a href="{{ route('user.detail_klaster', encrypt($id_klaster_plot)) }}">Detail Klaster</a></li> --}}
 <li><a href="#">Data Indikator</a></li>
 @endsection
 @section('main_section')

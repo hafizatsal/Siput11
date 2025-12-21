@@ -31,6 +31,25 @@ class PengukuranController extends Controller
          $this->middleware('auth');
     }
 
+    private function assertOwnsPlot($id_plot)
+    {
+      $owns = DB::table('tbl_plot')
+        ->join('tbl_klaster_plot', 'tbl_klaster_plot.id_klaster_plot', '=', 'tbl_plot.id_klaster_plot')
+        ->leftJoin('kategori_klaster', function ($join) {
+          $join->on('kategori_klaster.id_data_klaster', '=', 'tbl_klaster_plot.id_data_klaster')
+            ->orOn('kategori_klaster.id_data_klaster2', '=', 'tbl_klaster_plot.id_data_klaster');
+        })
+        ->where('tbl_plot.id_plot', $id_plot)
+        ->where(function ($query) {
+          $query->where('kategori_klaster.input_by', Auth::id())
+            ->orWhere('kategori_klaster.verif', 1);
+        })
+        ->exists();
+      if (!$owns) {
+        abort(403, 'Unauthorized');
+      }
+    }
+
     /**
      * Show the application dashboard.
      *
@@ -102,6 +121,7 @@ class PengukuranController extends Controller
 
     public function lihatpengukuran(Request $req){
       $id=$req->input('nama_plot');
+      $this->assertOwnsPlot($id);
       $id_klaster=DB::table('tbl_plot')->select('id_klaster_plot')
       ->where('id_plot','=',$id)
       ->first();
@@ -270,6 +290,7 @@ class PengukuranController extends Controller
 
     public function lihatpengukurans($id){
       $id=decrypt($id);
+      $this->assertOwnsPlot($id);
       $id_klaster=DB::table('tbl_plot')->select('id_klaster_plot')
       ->where('id_plot','=',$id)
       ->first();
@@ -488,3 +509,4 @@ class PengukuranController extends Controller
       return response()->json($desa);
     }
 }
+

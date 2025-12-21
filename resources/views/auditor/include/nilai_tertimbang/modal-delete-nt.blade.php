@@ -23,9 +23,14 @@
        <!-- /.modal-dialog -->
      </div>
 
+@push('script_tambahan')
      <script src="{{asset('Admin/modal_ajax.min.js')}}"></script>
+@endpush
+@push('script_tambahan')
      <script src="{{asset('Admin/bower_components/jquery/src/jquery.js')}}"></script>
+@endpush
 
+@push('script_tambahan')
        <script type="text/javascript">
 $(document).ready(function(){
        $('#delete_nt').on('show.bs.modal', function(event){
@@ -37,3 +42,4 @@ $(document).ready(function(){
        });
     });
        </script>
+@endpush

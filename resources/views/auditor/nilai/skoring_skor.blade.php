@@ -25,7 +25,7 @@
       <input type="hidden" id="param_biodiv" name="param_biodiv" value="{{$param_biodiv}}">
       </form>
 
-      <form id="skor_indikator" method="post" class="" action="{{route('/penilaian/nilai_indikator')}}">
+      <form id="skor_indikator" method="post" class="" action="{{route('auditor.penilaian.kesehatan')}}">
       {{csrf_field()}}
       <input type="hidden" id="nama_data_klaster1" name="nama_data_klaster1" value="{{$id_data_klaster}}">
       <input type="hidden" id="pengukuran_ke" name="pengukuran_ke" value="{{$pengukuran_ke}}">
@@ -35,7 +35,7 @@
       <input type="hidden" id="param_biodiv" name="param_biodiv" value="{{$param_biodiv}}">
       </form>
 
-      <form id="skor_tertimbang" method="post" class="" action="{{route('/penilaian/nilai_tertimbang')}}">
+      <form id="skor_tertimbang" method="post" class="" action="{{route('auditor.penilaian.kesehatan')}}">
       {{csrf_field()}}
       <input type="hidden" id="nama_data_klaster1" name="nama_data_klaster1" value="{{$id_data_klaster}}">
       <input type="hidden" id="pengukuran_ke" name="pengukuran_ke" value="{{$pengukuran_ke}}">
@@ -45,7 +45,7 @@
       <input type="hidden" id="param_biodiv" name="param_biodiv" value="{{$param_biodiv}}">
       </form>
 
-      <form id="skor_skor" method="post" class="" action="{{route('/penilaian/nilai_skor')}}">
+      <form id="skor_skor" method="post" class="" action="{{route('auditor.penilaian.kesehatan')}}">
       {{csrf_field()}}
       <input type="hidden" id="nama_data_klaster1" name="nama_data_klaster1" value="{{$id_data_klaster}}">
       <input type="hidden" id="pengukuran_ke" name="pengukuran_ke" value="{{$pengukuran_ke}}">
@@ -55,7 +55,7 @@
       <input type="hidden" id="param_biodiv" name="param_biodiv" value="{{$param_biodiv}}">
       </form>
 
-      <form id="skor_range" method="post" class="" action="{{route('/penilaian/range')}}">
+      <form id="skor_range" method="post" class="" action="{{route('auditor.penilaian.kesehatan')}}">
       {{csrf_field()}}
       <input type="hidden" id="nama_data_klaster1" name="nama_data_klaster1" value="{{$id_data_klaster}}">
       <input type="hidden" id="pengukuran_ke" name="pengukuran_ke" value="{{$pengukuran_ke}}">
@@ -65,7 +65,7 @@
       <input type="hidden" id="param_biodiv" name="param_biodiv" value="{{$param_biodiv}}">
       </form>
 
-      <form id="skor_analisis" method="post" class="" action="{{route('/penilaian/analisis')}}">
+      <form id="skor_analisis" method="post" class="" action="{{route('auditor.penilaian.kesehatan')}}">
       {{csrf_field()}}
       <input type="hidden" id="nama_data_klaster1" name="nama_data_klaster1" value="{{$id_data_klaster}}">
       <input type="hidden" id="pengukuran_ke" name="pengukuran_ke" value="{{$pengukuran_ke}}">
@@ -125,12 +125,14 @@
 <script src="{{asset('Admin/bower_components/datatables.net/js/jquery.dataTables.min.js')}}"></script>
 <script src="{{asset('Admin/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js')}}"></script>
 @endsection
-<script src="{{asset('Admin/bower_components/jquery/dist/jquery.min.js')}}"></script>
+@push('script_tambahan')
 <script type="text/javascript">
 </script>
+@endpush
 
    @section('script_table')
-   $(function () {
+<script>
+$(function () {
      $('#Nilai_Indikator').DataTable({
        'paging'      : true,
        'lengthChange': true,
@@ -156,5 +158,7 @@
        'autoWidth'   : false
      })
    })
-   @endsection
+   
+</script>@endsection
 @endsection
+

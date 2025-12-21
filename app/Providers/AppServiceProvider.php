@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\View;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +21,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        View::composer('user.home', function ($view) {
+            try {
+                $pengumuman = DB::table('pengumuman')->get();
+            } catch (\Throwable $e) {
+                $pengumuman = collect();
+            }
+            $view->with('pengumuman', $pengumuman);
+        });
     }
 }

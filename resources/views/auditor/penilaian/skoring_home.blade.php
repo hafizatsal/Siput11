@@ -191,7 +191,7 @@
                   <div class="checkbox">
                     <label>
                       <input type="checkbox" value="fisik" id="fisik" name="fisik">
-                      Sifat Fisika
+                      Sifat Fisikaa
                     </label>
                   </div>
                 </div>
@@ -252,9 +252,11 @@
 
 </div>
 @endsection
+@push('script_tambahan')
 <script src="{{asset('Admin/modal_ajax.min.js')}}"></script>
-<script src="{{asset('Admin/bower_components/jquery/dist/jquery.min.js')}}"></script>
+@endpush
 
+@push('script_tambahan')
 <script type="text/javascript">
 $(document).ready(function(){
   $('#pengukuranke').change(function(e){
@@ -502,3 +504,4 @@ $(document).ready(function(){
 
   });
 </script>
+@endpush

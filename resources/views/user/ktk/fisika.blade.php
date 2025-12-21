@@ -5,7 +5,7 @@
 @section('breadcrumb')
 <li><a href="{{route('user.data_indikator', encrypt($id))}}">Data Indikator</a></li>
 <li><a href="{{route('user.pengukuran_ktk',encrypt($id))}}">Paramater Kualitas Tapak</a></li>
-<li><a href="#">Kualitas Tapak Fisik</a></li>
+<li><a href="#">Kualitas Tapak Fisika</a></li>
 @endsection
 @section('main_section')
 
@@ -32,8 +32,12 @@
              @php($no++)
              @endforeach
            </select>
-            </td>
+           </td>
            </tr>
+          <tr>
+            <td>Plot Aktif</td>
+            <td> : {{ $data_pengukuran->nama_plot ?? '-' }} (Pengukuran ke-{{ $data_pengukuran->pengukuran_ke ?? '-' }})</td>
+          </tr>
          </tbody>
          <tfoot>
 
@@ -86,7 +90,7 @@
   <div class="col-xs-12 table">
     <div class="box">
         <div class="box-header">
-          <h3>Data Kualitas Tapak (Fisik)
+          <h3>Data Kualitas Tapak (Fisika)
             @if($data_pengukuran->nama_plot!="PLOT 1" && count($data_fisik)==0)
             <a class="btn btn-info pull-right" data-klasterid="" data-toggle="modal" data-target="#modal_tambah_fisik" href=""><i class="fa fa-plus"></i></a>
             @endif
@@ -98,7 +102,7 @@
             <a class="btn btn-primary btn-xs" href="{{route('user.bio_pohon',encrypt($id))}}">Biodiversitas Pohon</a>
             <a class="btn btn-primary btn-xs" href="{{route('user.bio_fauna',encrypt($id))}}">Biodiversitas Fauna</a>
             <a class="btn btn-info btn-xs" href="{{route('user.kimia',encrypt($id))}}">Kualitas Tapak (Kimia)</a>
-            <a class="btn btn-info btn-xs" href="">Kualitas Tapak (Fisik)</a>
+            <a class="btn btn-info btn-xs" href="">Kualitas Tapak (Fisika)</a>
         </h4>
         </div>
         <!-- /.box-header -->
@@ -201,3 +205,4 @@
    @endsection
 
   @endsection
+

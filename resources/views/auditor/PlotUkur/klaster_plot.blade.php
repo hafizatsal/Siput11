@@ -1,7 +1,7 @@
 @extends('layouts.layoutauditor')
 @section('title','Halaman Klaster')
 @section('active_plot_ukur','active')
-@section('active_klaster','active')
+@section('active_data_klaster_plot','active')
 @section('breadcrumb')
 <li><a href="{{route('auditor.data_klaster')}}">Data Klaster</a></li>
 <li><a href="#">Data Klaster Plot</a></li>
@@ -70,7 +70,6 @@
     <!-- /.col -->
   </div>
   <!-- /.row -->
-<script src="{{asset('Admin/bower_components/jquery/dist/jquery.min.js')}}"></script>
 @include('auditor.include.data_klaster.modal-edit_klaster_plot')
 @include('auditor.include.data_klaster.modal-delete_klaster_plot')
 

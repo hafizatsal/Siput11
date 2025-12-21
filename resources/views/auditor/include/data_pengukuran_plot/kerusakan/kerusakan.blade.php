@@ -147,6 +147,7 @@
 </div>
 
 
+@push('script_tambahan')
 <script type="text/javascript">
 $(document).ready(function() {
 
@@ -681,3 +682,4 @@ $('#modal_tambah_kerusakan').on('hidden.bs.modal', function(){
 //                   });
                 });
 </script>
+@endpush

@@ -78,6 +78,7 @@
   </div>
   <!-- /.modal -->
 
+@push('script_tambahan')
 <script type="text/javascript">
 $(document).ready(function() {
   // variabel untuk menampung jumlah nilai 3, 2, dan 1
@@ -664,3 +665,4 @@ $(document).ready(function() {
   //           });
   });
 </script>
+@endpush

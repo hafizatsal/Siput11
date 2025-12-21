@@ -64,8 +64,9 @@
     <!-- /.col -->
   </div>
   <!-- /.row -->
+@push('script_tambahan')
   <script src="{{asset('Admin/modal_ajax.min.js')}}"></script>
-  <script src="{{asset('Admin/bower_components/jquery/dist/jquery.min.js')}}"></script>
+@endpush
 
 @include('auditor.include.data_klaster.modal_edit_data_klaster')
 @include('auditor.include.data_klaster.modal_delete_data_klaster')

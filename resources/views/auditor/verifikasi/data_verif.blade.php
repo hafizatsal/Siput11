@@ -62,8 +62,9 @@
     <!-- /.col -->
   </div>
   <!-- /.row -->
+@push('script_tambahan')
   <script src="{{asset('Admin/modal_ajax.min.js')}}"></script>
-  <script src="{{asset('Admin/bower_components/jquery/dist/jquery.min.js')}}"></script>
+@endpush
 
 @include('auditor.include.verifikasi.modal_verif_data_klaster')
 @include('auditor.include.verifikasi.modal_unverif_data_klaster')

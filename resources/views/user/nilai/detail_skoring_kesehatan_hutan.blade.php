@@ -197,7 +197,7 @@
 @if($p_fisik!="")
 <div class="box box-warning">
     <div class="box-header with-border">
-      <h3 class="box-title"><b>Data Kualitas Tapak (Fisik)</b></h3>
+      <h3 class="box-title"><b>Data Kualitas Tapak (Fisika)</b></h3>
     </div>
     <!-- /.box-header -->
     <div class="box-body">
@@ -761,7 +761,7 @@
     </div>
     @endif
 
-    @if($j_pliu!="")
+    @if($j_pliu!="" && is_array($range_j_pliu_l) && is_array($range_j_pliu_r))
     <div class="col-md-3">
       <h4 style="text-align:center">Range Biodiversitas Pohon <br> (J')</h4>
       <div class="col-xs-12 table-responsive">
@@ -791,7 +791,7 @@
     </div>
     @endif
 
-    @if($d_mg!="")
+    @if($d_mg!="" && is_array($range_dmg_l) && is_array($range_dmg_r))
     <div class="col-md-3">
       <h4 style="text-align:center">Range Biodiversitas Pohon <br> (DMg)</h4>
       <div class="col-xs-12 table-responsive">
@@ -1027,6 +1027,8 @@ $(document).ready(function(){
 </script>
 
    @section('script_table')
+  <script>
+
    $(function () {
      $('#Nilai_Indikator').DataTable({
        'responsive'  : true,
@@ -1131,5 +1133,9 @@ $(document).ready(function(){
            .responsive.recalc();
      });
    })
-   @endsection
+   
+  </script>
 @endsection
+@endsection
+
+

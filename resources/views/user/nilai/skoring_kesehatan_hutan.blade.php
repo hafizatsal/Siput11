@@ -63,7 +63,7 @@
 <div class="box box-info">
   <div class="box-header with-border">
     <h3 class="box-title"><b>Nilai Kesehatan Hutan</b></h3>
-      <form id="skor_akhir" method="post" class="" action="{{route('penilaian_kesehatan')}}">
+      <form id="skor_akhir" method="post" class="" action="{{route('user.penilaian_kesehatan')}}">
         {{csrf_field()}}
         <input type="hidden" id="nama_data_klaster1" name="nama_data_klaster1" value="{{$id_data_klaster}}">
         <input type="hidden" id="pengukuran_ke" name="pengukuran_ke" value="{{$pengukuran_ke}}">
@@ -87,7 +87,7 @@
   <div class="box-body">
       <table id="nilai_kesehatan" class="table table-bordered table-striped">
         <div class="box-tools pull-right">
-          <form class="" action="{{route('penilaian_klaster_export')}}" method="POST">
+          <form class="" action="{{route('user.penilaian_klaster_export')}}" method="POST">
             {{ csrf_field() }}
             <input type="hidden" id="nama_data_klaster1" name="nama_data_klaster1" value="{{$id_data_klaster}}">
             <input type="hidden" id="pengukuran_ke" name="pengukuran_ke" value="{{$pengukuran_ke}}">
@@ -200,7 +200,7 @@
               @if($nilai_skor[$i]=="Buruk")<span class='label label-danger'>O</span>@endif
             </td>
             <td style="text-align: center; vertical-align: middle">
-              <form id="detail{{$i}}" method="post" class="" action="{{route('penilaian_kesehatan.detail')}}">
+              <form id="detail{{$i}}" method="post" class="" action="{{route('user.penilaian_kesehatan.detail')}}">
                 {{csrf_field()}}
                 <input type="hidden" id="pengukuran_ke" name="pengukuran_ke" value="{{$pengukuran_ke}}">
                 <input type="hidden" id="id_klaster_plot" name="id_klaster_plot" value="{{$value->id_klaster_plot}}">
@@ -1143,6 +1143,8 @@ $(document).ready(function(){
 
 </script>
   @section('script_table')
+  <script>
+
    $(function () {
      var table = $('#nilai_kesehatan').DataTable({
        'responsive'  : true,
@@ -1276,5 +1278,11 @@ $(document).ready(function(){
            .responsive.recalc();
      });
    })
-   @endsection
+   
+  </script>
 @endsection
+@endsection
+
+
+
+

@@ -12,7 +12,7 @@
       <h4>Data Pengukuran</h4>
       <hr>
 
-      <form class="form-horizontal form-label-left" action="{{route('user.data_pengukuran')}}" method="GET">
+      <form class="form-horizontal form-label-left" action="{{route('user.data_pengukuranplot')}}" method="GET">
           {{ csrf_field() }}
           <div class="form-group">
               <label class="control-label col-md-3 col-sm-3 col-xs-12" for="kepemilikan_home">Kepemilikan

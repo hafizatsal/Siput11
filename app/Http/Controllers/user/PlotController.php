@@ -23,6 +23,22 @@ class PlotController extends Controller
         $this->middleware('auth');
     }
 
+    private function assertOwnsPlot($id_plot)
+    {
+      $owns = DB::table('tbl_plot')
+        ->join('tbl_klaster_plot', 'tbl_klaster_plot.id_klaster_plot', '=', 'tbl_plot.id_klaster_plot')
+        ->leftJoin('kategori_klaster', function ($join) {
+          $join->on('kategori_klaster.id_data_klaster', '=', 'tbl_klaster_plot.id_data_klaster')
+            ->orOn('kategori_klaster.id_data_klaster2', '=', 'tbl_klaster_plot.id_data_klaster');
+        })
+        ->where('tbl_plot.id_plot', $id_plot)
+        ->where('kategori_klaster.input_by', Auth::id())
+        ->exists();
+      if (!$owns) {
+        abort(403, 'Unauthorized');
+      }
+    }
+
     /**
      * Show the application dashboard.
      *
@@ -32,6 +48,7 @@ class PlotController extends Controller
     public function lihatPlot($id){
 
       $id=decrypt($id);
+      $this->assertOwnsPlot($id);
       $id_klaster_plot= DB::table('tbl_plot')->select('id_klaster_plot')
       ->where('id_plot','=',$id)->first();
 
@@ -81,6 +98,18 @@ class PlotController extends Controller
           ->where('tbl_plot.id_plot','=',$id)
           ->orderBy('tbl_plot.id_plot', 'ASC')
           ->first();
+
+          $formatDms = function ($raw) {
+            preg_match_all('/-?\\d+(?:\\.\\d+)?/', (string) $raw, $matches);
+            $deg = isset($matches[0][0]) ? (float) $matches[0][0] : 0;
+            $min = isset($matches[0][1]) ? (float) $matches[0][1] : 0;
+            $sec = isset($matches[0][2]) ? (float) $matches[0][2] : 0;
+            $degreeSymbol = "\xC2\xB0";
+            return sprintf('%s%s %s\' %s"', $deg, $degreeSymbol, $min, $sec);
+          };
+
+          $data_plot->koordinat_bt_display = $formatDms($data_plot->koordinat_BT);
+          $data_plot->koordinat_ls_display = $formatDms($data_plot->koordinat_LS);
 
           $pengukuran=DB::table('pengukuran_master')->select('pengukuran_master.*', DB::raw("DATE_FORMAT(pengukuran_master.tahun_pengukuran, '%d-%m-%Y') as tahun"))->where('id_plot','=',$id)->get();
 
@@ -228,10 +257,20 @@ class PlotController extends Controller
             'id_plot'=>'required|integer',
           ]);
 
+        $id_data_klaster = DB::table('tbl_plot')
+          ->join('tbl_klaster_plot', 'tbl_klaster_plot.id_klaster_plot', '=', 'tbl_plot.id_klaster_plot')
+          ->where('tbl_plot.id_plot', $id_plot)
+          ->value('tbl_klaster_plot.id_data_klaster');
+
+        if (!$id_data_klaster) {
+          throw new CustomException('Id data klaster tidak ditemukan untuk plot ini.');
+        }
+
         $data_pengukuran = array(
           'pengukuran_ke' => $pengukuran_ke,
           'tahun_pengukuran' => $tanggal_pengukuran,
           'nama_pengukur' => $nama_pengukur,
+          'id_data_klaster' => $id_data_klaster,
           'id_plot' => $id_plot,
         );
         try{
@@ -259,10 +298,20 @@ class PlotController extends Controller
             'id_plot'=>'required|integer',
           ]);
 
+        $id_data_klaster = DB::table('tbl_plot')
+          ->join('tbl_klaster_plot', 'tbl_klaster_plot.id_klaster_plot', '=', 'tbl_plot.id_klaster_plot')
+          ->where('tbl_plot.id_plot', $id_plot)
+          ->value('tbl_klaster_plot.id_data_klaster');
+
+        if (!$id_data_klaster) {
+          throw new CustomException('Id data klaster tidak ditemukan untuk plot ini.');
+        }
+
         $data_pengukuran = array(
           'pengukuran_ke' => $pengukuran_ke,
           'tahun_pengukuran' => $tanggal_pengukuran,
           'nama_pengukur' => $nama_pengukur,
+          'id_data_klaster' => $id_data_klaster,
           'id_plot' => $id_plot,
         );
         try{

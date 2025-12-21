@@ -63,9 +63,12 @@
   </div>
   <!-- /.row -->
 
+@push('script_tambahan')
   <script src="{{asset('Admin/modal_ajax.min.js')}}"></script>
+@endpush
+@push('script_tambahan')
   <script src="{{asset('Admin/bower_components/jquery/src/jquery.js')}}"></script>
-  <script src="{{asset('Admin/bower_components/jquery/dist/jquery.min.js')}}"></script>
+@endpush
 
   @include('auditor.include.data_pengukuran_plot.pertumbuhan.pertumbuhan')
 

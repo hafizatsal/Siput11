@@ -19,7 +19,7 @@
 							<div class="tab-content">
 								<!-- tab 5 -->
 								<div class="tab-pane active" id="tab_5">
-                  <form id="formsatu" method="post" class="" action="{{route('auditor.data_klaster.insert')}}"
+                  <form id="formsatu" method="post" class="" action="{{route('auditor.insert_klaster')}}"
                   onsubmit="document.getElementById('submit').disabled=true;
                   document.getElementById('submit').value='Sedang menyimpan...';">
                   {{csrf_field()}}
@@ -371,11 +371,18 @@
 	<!-- /.modal -->
 </div>
 
+@push('script_tambahan')
 <script src="{{asset('Admin/modal_ajax.min.js')}}"></script>
+@endpush
 <!-- InputMask -->
+@push('script_tambahan')
 <script src="{{asset('Admin/plugins/input-mask/jquery.inputmask.js')}}"></script>
+@endpush
+@push('script_tambahan')
 <script src="{{asset('Admin/plugins/input-mask/jquery.inputmask.extensions.js')}}"></script>
+@endpush
 
+@push('script_tambahan')
 <script type = "text/javascript">
   $('[data-mask]').inputmask()
   $(document).ready(function () {
@@ -976,3 +983,4 @@
   });
   });
 </script>
+@endpush

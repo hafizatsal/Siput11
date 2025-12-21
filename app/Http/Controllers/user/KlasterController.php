@@ -112,7 +112,7 @@ class KlasterController extends Controller
        $koor_lintang_klaster = str_replace('_', '', $koor_lintang_klaster);
 
        // normalisasi koordinat: buang simbol, ambil tiga angka (deg, min, sec) dan terapkan tanda LS/BB
-       $normalizeCoord = function ($val, $hemi) {
+       $normalizeCoord = function ($val, $hemi, $unused = null) {
          if ($val === null) {
            $val = '';
          }
@@ -559,7 +559,8 @@ class KlasterController extends Controller
       };
 
       $formatDms = function ($deg, $min, $sec) {
-        return sprintf('%s%s %s\' %s"', $deg, chr(176), $min, $sec);
+        $degreeSymbol = "\xC2\xB0";
+        return sprintf('%s%s %s\' %s"', $deg, $degreeSymbol, $min, $sec);
       };
 
       $buildCoord = function ($raw, $positiveLabel, $negativeLabel) use ($parseDms, $formatDms) {
@@ -623,7 +624,7 @@ else{
 }
 
 
-        return view('auditor.PlotUkur.detail_klaster',[
+        return view('user.PlotUkur.detail_klaster',[
           'lintang_masked' => $koordinat_lintang,
           'bujur_masked' => $koordinat_bujur,
           'id_data_klaster2' => $id_data_klaster2,
@@ -709,7 +710,8 @@ else{
       };
 
       $formatDms = function ($deg, $min, $sec) {
-        return sprintf('%s%s %s\' %s"', $deg, chr(176), $min, $sec);
+        $degreeSymbol = "\xC2\xB0";
+        return sprintf('%s%s %s\' %s"', $deg, $degreeSymbol, $min, $sec);
       };
 
       $buildCoord = function ($raw, $positiveLabel, $negativeLabel) use ($parseDms, $formatDms) {
@@ -773,7 +775,7 @@ else{
 }
 
 
-        return view('auditor.PlotUkur.detail_klaster',[
+        return view('user.PlotUkur.detail_klaster',[
           'lintang_masked' => $koordinat_lintang,
           'bujur_masked' => $koordinat_bujur,
           'id_data_klaster2' => $id_data_klaster2,
@@ -812,6 +814,12 @@ else{
       $koorniatLS = $req->input('lintang');
       $ket_lintang = $req->input('pilih_lintang');
       $ket_bujur =  $req->input('pilih_bujur');
+      $return_url = $req->input('return_url');
+
+      if (!$id_plot) {
+        session()->flash('delete', 'Id plot tidak ditemukan.');
+        return $return_url ? redirect($return_url) : back();
+      }
 
       if($koorniatBT==""){
         $koorniatBT = "0 0' 0.00\"";
@@ -846,13 +854,17 @@ else{
         'koordinat_LS' => $koor_ls_ful,
       );
       try{
-      DB::table('tbl_plot')->where('id_plot', $id_plot)->update($data_plot);
-      session()->flash('insert', 'Koordinat Plot berhasil diubah.');
+      $updated = DB::table('tbl_plot')->where('id_plot', $id_plot)->update($data_plot);
+      if ($updated) {
+        session()->flash('insert', 'Koordinat Plot berhasil diubah.');
+      } else {
+        session()->flash('delete', 'Koordinat Plot tidak berubah.');
+      }
       }
       catch(\Illuminate\Database\QueryException $e){
         throw new CustomException($e->getMessage());
       }
-      return back();
+      return $return_url ? redirect($return_url) : back();
     }
 
     public function detailPlot($id){
@@ -1132,62 +1144,32 @@ else{
         $status_lengkap[] = 0;
       }
 
-      $koordinat_bujur_p=$nama_plot->koordinat_BT;
-      $splitName_p = explode(' ', $koordinat_bujur_p, 2);
-      $splitName2_p= explode(' ', $splitName_p[1], 2);
-      $splitName3_p= explode(' ', $splitName2_p[1], 2);
-      if($splitName_p[0]>=0){
-        $ket_bujur_p='BT';
+      $parseDms = function ($raw) {
+        preg_match_all('/-?\d+(?:\.\d+)?/', (string) $raw, $matches);
+        $deg = isset($matches[0][0]) ? (float) $matches[0][0] : 0;
+        $min = isset($matches[0][1]) ? (float) $matches[0][1] : 0;
+        $sec = isset($matches[0][2]) ? (float) $matches[0][2] : 0;
+        return [$deg, $min, $sec];
+      };
 
-        $long_derajat = $splitName_p[0];
-        $menit_b = floatval($splitName2_p[0])/60;
-        $detik_b = floatval($splitName3_p[0])/3600;
+      $formatDms = function ($deg, $min, $sec) {
+        $degreeSymbol = "\xC2\xB0";
+        return sprintf('%s%s %s\' %s"', $deg, $degreeSymbol, $min, $sec);
+      };
 
-        $koordinat_bujur_angka_klaster = $long_derajat + $menit_b + $detik_b;
-      }
-      else{
-        $ket_bujur_p='BB';
-        $splitName_p[0]=$splitName_p[0]*-1;
+      $buildCoord = function ($raw, $positiveLabel, $negativeLabel) use ($parseDms, $formatDms) {
+        [$deg, $min, $sec] = $parseDms($raw);
+        $label = $deg >= 0 ? $positiveLabel : $negativeLabel;
+        $degAbs = abs($deg);
+        $decimal = ($degAbs + $min / 60 + $sec / 3600) * ($label == $positiveLabel ? 1 : -1);
+        return [$formatDms($degAbs, $min, $sec), $label, $decimal];
+      };
 
-        $long_derajat = $splitName_p[0]*-1;
-        $menit_b = floatval($splitName2_p[0])/60;
-        $detik_b = floatval($splitName3_p[0])/3600;
-
-        $koordinat_bujur_angka_klaster = $long_derajat - $menit_b - $detik_b;
-      }
-
-
-
-      $koor_bt_ful_p=$splitName_p[0].' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â´ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¼ '.$splitName2_p[0].' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ '.$splitName3_p[0].' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â';
-
-      $koordinat_lintang_p=$nama_plot->koordinat_LS;
-      $l_splitName_p = explode(' ', $koordinat_lintang_p, 2);
-      $l_splitName2_p= explode(' ', $l_splitName_p[1], 2);
-      $l_splitName3_p= explode(' ', $l_splitName2_p[1], 2);
-      if($l_splitName_p[0]>=0){
-        $ket_lintang_p='LU';
-
-        $lat_derajat = $l_splitName_p[0];
-        $menit_l = floatval($l_splitName2_p[0])/60;
-        $detik_l = floatval($l_splitName3_p[0])/3600;
-
-        $koordinat_lintang_angka_klaster = $lat_derajat + $menit_l + $detik_l;
-      }
-      else{
-        $ket_lintang_p='LU';
-        $l_splitName_p[0]=$l_splitName_p[0]*-1;
-
-        $lat_derajat = $l_splitName_p[0]*-1;
-        $menit_l = floatval($l_splitName2_p[0])/60;
-        $detik_l = floatval($l_splitName3_p[0])/3600;
-
-        $koordinat_lintang_angka_klaster = $lat_derajat - $menit_l - $detik_l;
-      }
-
-
-      $koor_ls_ful_p=$l_splitName_p[0].' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â´ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¼ '.$l_splitName2_p[0].' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ '.$l_splitName3_p[0].' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â';
-
-      return view('auditor.PlotUkur.detail_data_plot',[
+      list($koor_bt_ful_p, $ket_bujur_p, $koordinat_bujur_angka_klaster) =
+        $buildCoord($nama_plot->koordinat_BT, 'BT', 'BB');
+      list($koor_ls_ful_p, $ket_lintang_p, $koordinat_lintang_angka_klaster) =
+        $buildCoord($nama_plot->koordinat_LS, 'LU', 'LS');
+      return view('user.PlotUkur.detail_data_plot',[
         'id_data_klaster2' => $id_data_klaster2,
         'koor_bt_ful_p'=>$koor_bt_ful_p,
         'koor_ls_ful_p'=>$koor_ls_ful_p,
@@ -1487,62 +1469,32 @@ else{
         $status_lengkap[] = 0;
       }
 
-      $koordinat_bujur_p=$nama_plot->koordinat_BT;
-      $splitName_p = explode(' ', $koordinat_bujur_p, 2);
-      $splitName2_p= explode(' ', $splitName_p[1], 2);
-      $splitName3_p= explode(' ', $splitName2_p[1], 2);
-      if($splitName_p[0]>=0){
-        $ket_bujur_p='BT';
+      $parseDms = function ($raw) {
+        preg_match_all('/-?\d+(?:\.\d+)?/', (string) $raw, $matches);
+        $deg = isset($matches[0][0]) ? (float) $matches[0][0] : 0;
+        $min = isset($matches[0][1]) ? (float) $matches[0][1] : 0;
+        $sec = isset($matches[0][2]) ? (float) $matches[0][2] : 0;
+        return [$deg, $min, $sec];
+      };
 
-        $long_derajat = $splitName_p[0];
-        $menit_b = floatval($splitName2_p[0])/60;
-        $detik_b = floatval($splitName3_p[0])/3600;
+      $formatDms = function ($deg, $min, $sec) {
+        $degreeSymbol = "\xC2\xB0";
+        return sprintf('%s%s %s\' %s"', $deg, $degreeSymbol, $min, $sec);
+      };
 
-        $koordinat_bujur_angka_klaster = $long_derajat + $menit_b + $detik_b;
-      }
-      else{
-        $ket_bujur_p='BB';
-        $splitName_p[0]=$splitName_p[0]*-1;
+      $buildCoord = function ($raw, $positiveLabel, $negativeLabel) use ($parseDms, $formatDms) {
+        [$deg, $min, $sec] = $parseDms($raw);
+        $label = $deg >= 0 ? $positiveLabel : $negativeLabel;
+        $degAbs = abs($deg);
+        $decimal = ($degAbs + $min / 60 + $sec / 3600) * ($label == $positiveLabel ? 1 : -1);
+        return [$formatDms($degAbs, $min, $sec), $label, $decimal];
+      };
 
-        $long_derajat = $splitName_p[0]*-1;
-        $menit_b = floatval($splitName2_p[0])/60;
-        $detik_b = floatval($splitName3_p[0])/3600;
-
-        $koordinat_bujur_angka_klaster = $long_derajat - $menit_b - $detik_b;
-      }
-
-
-
-      $koor_bt_ful_p=$splitName_p[0].' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â´ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¼ '.$splitName2_p[0].' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ '.$splitName3_p[0].' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â';
-
-      $koordinat_lintang_p=$nama_plot->koordinat_LS;
-      $l_splitName_p = explode(' ', $koordinat_lintang_p, 2);
-      $l_splitName2_p= explode(' ', $l_splitName_p[1], 2);
-      $l_splitName3_p= explode(' ', $l_splitName2_p[1], 2);
-      if($l_splitName_p[0]>=0){
-        $ket_lintang_p='LU';
-
-        $lat_derajat = $l_splitName_p[0];
-        $menit_l = floatval($l_splitName2_p[0])/60;
-        $detik_l = floatval($l_splitName3_p[0])/3600;
-
-        $koordinat_lintang_angka_klaster = $lat_derajat + $menit_l + $detik_l;
-      }
-      else{
-        $ket_lintang_p='LU';
-        $l_splitName_p[0]=$l_splitName_p[0]*-1;
-
-        $lat_derajat = $l_splitName_p[0]*-1;
-        $menit_l = floatval($l_splitName2_p[0])/60;
-        $detik_l = floatval($l_splitName3_p[0])/3600;
-
-        $koordinat_lintang_angka_klaster = $lat_derajat - $menit_l - $detik_l;
-      }
-
-
-      $koor_ls_ful_p=$l_splitName_p[0].' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â´ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¼ '.$l_splitName2_p[0].' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ '.$l_splitName3_p[0].' ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â';
-
-      return view('auditor.PlotUkur.detail_data_plot',[
+      list($koor_bt_ful_p, $ket_bujur_p, $koordinat_bujur_angka_klaster) =
+        $buildCoord($nama_plot->koordinat_BT, 'BT', 'BB');
+      list($koor_ls_ful_p, $ket_lintang_p, $koordinat_lintang_angka_klaster) =
+        $buildCoord($nama_plot->koordinat_LS, 'LU', 'LS');
+      return view('user.PlotUkur.detail_data_plot',[
         'id_data_klaster2' => $id_data_klaster2,
         'koor_bt_ful_p'=>$koor_bt_ful_p,
         'koor_ls_ful_p'=>$koor_ls_ful_p,
@@ -1852,7 +1804,7 @@ else{
       ->where('id_data_klaster', '=', $id)
       ->first();
 
-      return view('auditor.PlotUkur.nilaiTertimbang',[
+      return view('user.PlotUkur.nilaiTertimbang',[
         'nama'=>$nama_data_klaster,
         'data_nilai'=>$data_nilai,
 
@@ -1912,6 +1864,7 @@ else{
       return back();
     }
 }
+
 
 
 

@@ -27,8 +27,8 @@
                   <option value="1">1</option>
                   <option value="2">2</option>
                   <option value="3">3</option>
-                  <option value="99">Perubahan</option>
-                  <option value="%">Semua Pengukuran</option>
+                  <option value="99">Perubahan (butuh pengukuran 1 &amp; 2)</option>
+                  <option value="%">Semua Pengukuran (butuh pengukuran 1, 2 dan 3)</option>
                 </select>
               </div>
             </div>
@@ -191,7 +191,7 @@
                   <div class="checkbox">
                     <label>
                       <input type="checkbox" value="fisik" id="fisik" name="fisik">
-                      Sifat Fisika
+                      Sifat Fisikaa
                     </label>
                   </div>
                 </div>
@@ -502,3 +502,4 @@ $(document).ready(function(){
 
   });
 </script>
+

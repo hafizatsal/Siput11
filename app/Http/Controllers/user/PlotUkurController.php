@@ -518,6 +518,7 @@ return back();
       ->select('tahun_pengukuran','id_data_klaster')
       ->where('kategori','=',$kategori)
       ->where('pengukuran_ke','=',$pengukuran_ke)
+      ->where('input_by','=',Auth::user()->id)
       ->orderBy('tahun_pengukuran')
       ->get();
       return response()->json($data_tahun);
@@ -535,13 +536,14 @@ return back();
       else if($pengukuran_ke=="99"){
         $data_kategori = DB::table('kategori_klaster')
         ->where('pengukuran_ke','=',1)
+        ->where('input_by','=',Auth::user()->id)
         ->orderBy('kategori')
         ->get();
       }
       else{
         $data_kategori = DB::table('kategori_klaster')
         ->where('pengukuran_ke','=',1)
-        // ->where('input_by','=',Auth::user()->id)
+        ->where('input_by','=',Auth::user()->id)
         ->orderBy('kategori')
         ->get();
       }

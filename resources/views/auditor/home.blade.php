@@ -69,17 +69,28 @@
   </div>
 </div>
 
+@push('script_tambahan')
 <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
   integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
   crossorigin=""></script>
+@endpush
+@push('script_tambahan')
   <script src="https://unpkg.com/esri-leaflet@2.2.4/dist/esri-leaflet.js"
     integrity="sha512-tyPum7h2h36X52O2gz+Pe8z/3l+Y9S1yEUscbVs5r5aEY5dFmP1WWRY/WLLElnFHa+k1JBQZSCDGwEAnm2IxAQ=="
     crossorigin=""></script>
+@endpush
+@push('script_tambahan')
   <script src="https://unpkg.com/esri-leaflet-geocoder@2.2.13/dist/esri-leaflet-geocoder.js"
     integrity="sha512-zdT4Pc2tIrc6uoYly2Wp8jh6EPEWaveqqD3sT0lf5yei19BC1WulGuh5CesB0ldBKZieKGD7Qyf/G0jdSe016A=="
     crossorigin=""></script>
+@endpush
+@push('script_tambahan')
   <script src="{{asset('cluster_marker/dist/leaflet.markercluster.js')}}"></script>
+@endpush
+@push('script_tambahan')
   <script src="{{asset('Admin/modal_ajax.min.js')}}"></script>
+@endpush
+@push('script_tambahan')
 <script>
 
 // var mymap = L.map('mapid',{scrollWheelZoom:false}).setView([-3.864255, 122.167969], 4);
@@ -470,5 +481,6 @@ var searchControl = L.esri.Geocoding.geosearch().addTo(mymap);
   });
 });
 </script>
+@endpush
 
 @endsection

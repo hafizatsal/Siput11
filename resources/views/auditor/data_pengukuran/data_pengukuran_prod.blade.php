@@ -97,10 +97,12 @@
 @section('data_table')
 <script src="{{asset('Admin/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js')}}"></script>
 @endsection
+@push('script_tambahan')
 <script src="{{asset('Admin/modal_ajax.min.js')}}"></script>
-<script src="{{asset('Admin/bower_components/jquery/dist/jquery.min.js')}}"></script>
+@endpush
 
 
+@push('script_tambahan')
 <script type="text/javascript">
 $(document).ready(function(){
 
@@ -296,3 +298,4 @@ $(document).ready(function(){
 
 });
 </script>
+@endpush

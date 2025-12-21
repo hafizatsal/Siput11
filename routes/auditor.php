@@ -59,6 +59,7 @@ Route::middleware(['auth', 'auditor'])
         Route::get('/plot_ukur/klaster/{id}', [PlotUkurController::class, 'klaster_plot'])->name('auditor.klaster_plot');
 
         /* KLASTER CONTROLLER */
+        Route::post('/plot_ukur/klaster/data_klaster/insert', [KlasterController::class, 'insert_klaster_plot'])->name('auditor.insert_klaster');
         Route::get('/plot_ukur/klaster/data_klaster/edit', [KlasterController::class, 'update_klaster_plot'])->name('auditor.klaster.data_klaster.edit');
         Route::get('/plot_ukur/klaster/data_klaster/hapus', [KlasterController::class, 'hapus_klaster_plot'])->name('auditor.klaster.data_klaster.hapus');
         Route::get('/plot_ukur/klaster/detail/{id}', [KlasterController::class, 'detail_klaster_plot'])->name('auditor.klaster.data_klaster.detail');
@@ -206,7 +207,7 @@ Route::middleware(['auth', 'auditor'])
 
         Route::get('/kabupaten_skor', [SkoringController::class, 'kabupaten_skor'])->name('auditor.kabupaten_skor');
         Route::get('/kecamatan_skor', [SkoringController::class, 'kecamatan_skor'])->name('auditor.kecamatan_skor');
-        Route::get('/skor_pengukuran_ke', [SkoringController::class, 'pengukuranke'])->name('auditor.skor_pengukuran_ke');
+        Route::get('/skor_pengukuran_ke', [SkoringController::class, 'pengukuran_ke'])->name('auditor.skor_pengukuran_ke');
 
         Route::get('/plot_ukur/nilai_tertimbang/{id}', [KlasterController::class, 'tertimbang'])->name('auditor.isi_nilai_tertimbang');
         Route::get('/nilai_tertimbang/hapus', [KlasterController::class, 'hapus_prod'])->name('auditor.hapus_tertimbang_prod');

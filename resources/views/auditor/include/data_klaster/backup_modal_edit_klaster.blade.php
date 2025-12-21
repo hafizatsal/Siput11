@@ -321,7 +321,9 @@
   <!-- /.modal-dialog -->
 </div>
 <!-- /.modal -->
+@push('script_tambahan')
 <script src="{{asset('Admin/modal_ajax.min.js')}}"></script>
+@endpush
 <!-- InputMask -->
 @section('script_tambahan')
 <script src="{{asset('Admin/plugins/input-mask/jquery.inputmask.js')}}"></script>

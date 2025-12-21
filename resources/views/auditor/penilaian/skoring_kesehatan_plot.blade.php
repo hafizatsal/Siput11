@@ -248,10 +248,11 @@
 <script src="{{asset('Admin/bower_components/datatables.net/js/jquery.dataTables.min.js')}}"></script>
 <script src="{{asset('Admin/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js')}}"></script>
 @endsection
-<script src="{{asset('Admin/bower_components/jquery/dist/jquery.min.js')}}"></script>
+@push('script_tambahan')
 <script type="text/javascript">
 
 </script>
+@endpush
 
    @section('script_table')
    <script>

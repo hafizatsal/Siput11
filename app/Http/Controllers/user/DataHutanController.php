@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Auth;
 class DataHutanController extends Controller
 {
     /**
@@ -16,6 +17,21 @@ class DataHutanController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+    }
+
+    private function assertOwnsKlasterPlot($id_klaster_plot)
+    {
+      $owns = DB::table('tbl_klaster_plot')
+        ->leftJoin('kategori_klaster', function ($join) {
+          $join->on('kategori_klaster.id_data_klaster', '=', 'tbl_klaster_plot.id_data_klaster')
+            ->orOn('kategori_klaster.id_data_klaster2', '=', 'tbl_klaster_plot.id_data_klaster');
+        })
+        ->where('tbl_klaster_plot.id_klaster_plot', $id_klaster_plot)
+        ->where('kategori_klaster.input_by', Auth::id())
+        ->exists();
+      if (!$owns) {
+        abort(403, 'Unauthorized');
+      }
     }
 
     /**
@@ -31,6 +47,7 @@ class DataHutanController extends Controller
     public function data2(Request $req)
     {
       $id_klaster = $req->id;
+      $this->assertOwnsKlasterPlot($id_klaster);
       $data_klaster = DB::table('tbl_klaster_plot')
                    ->join(
                       'hak_milik_jenis_fungsi_hutan',

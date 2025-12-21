@@ -1,7 +1,7 @@
 @extends('layouts.layout')
 @section('title','Halaman Klaster')
 @section('active_plot_ukur','active')
-@section('active_klaster','active')
+@section('active_data_klaster_plot','active')
 @section('breadcrumb')
 <li><a href="{{route('user.data_klaster')}}">Data Klaster</a></li>
 <li><a href="#">Data Klaster Plot</a></li>

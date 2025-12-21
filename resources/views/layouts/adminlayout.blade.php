@@ -356,6 +356,9 @@
                 }
             @endif
 
+            setTimeout(function() {
+                $('.alert-dismissible').fadeOut(200);
+            }, 4000);
 
         });
     </script>

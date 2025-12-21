@@ -153,11 +153,18 @@
   <!-- /.modal -->
 
 
+@push('script_tambahan')
 <script src="{{asset('Admin/modal_ajax.min.js')}}"></script>
+@endpush
 
+@push('script_tambahan')
 <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+@endpush
+@push('script_tambahan')
 <script src="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-validator/0.4.5/js/bootstrapvalidator.min.js"></script>
+@endpush
 
+@push('script_tambahan')
   <script type="text/javascript">
 
       $('#validateForm').bootstrapValidator({
@@ -389,3 +396,4 @@
     //   }
     // });
   </script>
+@endpush

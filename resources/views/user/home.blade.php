@@ -33,7 +33,8 @@
          </div>
        </div>
         <div class="box-body">
-          <p class="pengumuman_1">{!! $pengumuman[0]->isi_pengumuman !!}</p>
+          @php($pengumuman0 = $pengumuman[0]->isi_pengumuman ?? '')
+          <p class="pengumuman_1">{!! $pengumuman0 !!}</p>
 
           <br/>
           <!-- <marquee behavior="scroll" direction="right" scrollamount="1"> -->
@@ -46,7 +47,8 @@
           <p><span class="fa fa-fw fa-file-word-o"></span> Format <i>Tally Sheet </i> Klaster Plot untuk pengukuran kesehatan hutan dapat di unduh <a href="{{route('user.download_template_tally_sheet_word')}}">disini</a>.</p>
           <p><span class="fa fa-fw fa-file-excel-o"></span> Format <i>Tally Sheet </i> Klaster Plot untuk <i>import</i> data pengukuran kesehatan hutan dapat di unduh <a href="{{route('user.download_template_tally_sheet_excel')}}">disini</a>.</p>
 
-            <p>{!! $pengumuman[1]->isi_pengumuman !!}</p>
+            @php($pengumuman1 = $pengumuman[1]->isi_pengumuman ?? '')
+            <p>{!! $pengumuman1 !!}</p>
 
             <marquee direction="left"><p style="color: red;">Jika ada masalah dengan sistem, mohon hubungi administrator (<b>siputunila@gmail.com</b>).</p></marquee>
         </div>

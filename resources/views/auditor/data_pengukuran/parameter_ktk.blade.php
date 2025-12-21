@@ -27,7 +27,7 @@
 
                             <tr>
                                 <td>1</td>
-                                <td>Sifat Fisik</td>
+                                <td>Sifat Fisika</td>
                                 <td>
                                     <a class="fa fa-search btn btn-success btn-xs" data-info=""
                                         href="{{ route('auditor.fisika', encrypt($id)) }}"></a>
@@ -62,8 +62,9 @@
     <script src="{{ asset('Admin/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
 @endsection
 
+@push('script_tambahan')
 <script src="{{ asset('Admin/modal_ajax.min.js') }}"></script>
-<script src="{{ asset('Admin/bower_components/jquery/dist/jquery.min.js') }}"></script>
+@endpush
 <!-- jquery untuk mengatur datatable -->
 @section('script_table')
     <script>

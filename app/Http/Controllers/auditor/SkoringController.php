@@ -4,7 +4,6 @@ namespace App\Http\Controllers\auditor;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
@@ -18,6 +17,43 @@ class SkoringController extends Controller
     public function __construct()
     {
          $this->middleware('auth');
+    }
+
+    private function assertOwnsKlasterPlot($id_klaster_plot)
+    {
+      $owns = DB::table('tbl_klaster_plot')
+        ->leftJoin('kategori_klaster', function ($join) {
+          $join->on('kategori_klaster.id_data_klaster', '=', 'tbl_klaster_plot.id_data_klaster')
+            ->orOn('kategori_klaster.id_data_klaster2', '=', 'tbl_klaster_plot.id_data_klaster');
+        })
+        ->where('tbl_klaster_plot.id_klaster_plot', $id_klaster_plot)
+        ->where(function ($query) {
+          $query->where('kategori_klaster.input_by', Auth::id())
+            ->orWhere('kategori_klaster.verif', 1);
+        })
+        ->exists();
+      if (!$owns) {
+        abort(403, 'Unauthorized');
+      }
+    }
+
+    private function assertOwnsPlot($id_plot)
+    {
+      $owns = DB::table('tbl_plot')
+        ->leftJoin('tbl_klaster_plot', 'tbl_klaster_plot.id_klaster_plot', '=', 'tbl_plot.id_klaster_plot')
+        ->leftJoin('kategori_klaster', function ($join) {
+          $join->on('kategori_klaster.id_data_klaster', '=', 'tbl_klaster_plot.id_data_klaster')
+            ->orOn('kategori_klaster.id_data_klaster2', '=', 'tbl_klaster_plot.id_data_klaster');
+        })
+        ->where('tbl_plot.id_plot', $id_plot)
+        ->where(function ($query) {
+          $query->where('kategori_klaster.input_by', Auth::id())
+            ->orWhere('kategori_klaster.verif', 1);
+        })
+        ->exists();
+      if (!$owns) {
+        abort(403, 'Unauthorized');
+      }
     }
 
     /**
@@ -4511,9 +4547,10 @@ class SkoringController extends Controller
 
      }
 
-     public function detail(Request $req){
-       $id=$req->input('id_klaster_plot');
-       $pengukuran_ke = $req->input('pengukuran_ke');
+    public function detail(Request $req){
+      $id=$req->input('id_klaster_plot');
+      $this->assertOwnsKlasterPlot($id);
+      $pengukuran_ke = $req->input('pengukuran_ke');
        $p_lbds=$req->p_lbds;
        $p_volume=$req->p_volume;
        $p_kerusakan=$req->p_kerusakan;
@@ -5555,9 +5592,10 @@ class SkoringController extends Controller
        ]);
      }
 
-     public function detail_plot(Request $req){
-       $id_plot = $req->id_plot;
-       $id_klaster = DB::table('tbl_plot')
+    public function detail_plot(Request $req){
+      $id_plot = $req->id_plot;
+      $this->assertOwnsPlot($id_plot);
+      $id_klaster = DB::table('tbl_plot')
        ->join('tbl_klaster_plot','tbl_klaster_plot.id_klaster_plot','=','tbl_plot.id_klaster_plot')
        ->where('tbl_plot.id_plot','=',$id_plot)->first();
        $id_klaster_plot = $id_klaster->id_klaster_plot;
@@ -5862,9 +5900,9 @@ class SkoringController extends Controller
          ]);
      }
 
-     public function kabupaten_skor(Request $req)
-     {
-         $id_prov= Input::get('id_prov');
+    public function kabupaten_skor(Request $req)
+    {
+        $id_prov = $req->input('id_prov');
          $data_prov=DB::table('lokasi')
          ->join('tbl_klaster_plot','tbl_klaster_plot.id_klaster_plot','=','lokasi.id_klaster_plot')
          ->join('kabupaten','kabupaten.id','=','lokasi.id_kabupaten')
@@ -5876,9 +5914,9 @@ class SkoringController extends Controller
 
      }
 
-     public function kecamatan_skor(Request $req)
-     {
-         $id_kab= Input::get('id_kab');
+    public function kecamatan_skor(Request $req)
+    {
+        $id_kab = $req->input('id_kab');
          $data_kab=DB::table('lokasi')
          ->join('tbl_klaster_plot','tbl_klaster_plot.id_klaster_plot','=','lokasi.id_klaster_plot')
          ->join('kecamatan','kecamatan.id','=','lokasi.id_kecamatan')
@@ -5890,9 +5928,9 @@ class SkoringController extends Controller
 
      }
 
-     public function pengukuran_ke(Request $r)
-     {
-       $id_data_klaster=Input::get('id_data_klaster');
+    public function pengukuran_ke(Request $r)
+    {
+      $id_data_klaster = $r->input('id_data_klaster');
 
        // $dapeng=DB::table('lokasi')
        // ->join('tbl_klaster_plot','tbl_klaster_plot.id_klaster_plot','=','lokasi.id_klaster_plot')
@@ -5916,3 +5954,4 @@ class SkoringController extends Controller
      }
 
 }
+

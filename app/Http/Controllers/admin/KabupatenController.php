@@ -28,6 +28,9 @@ class KabupatenController extends Controller
   public function index($id)
   {
       $id=decrypt($id);
+      $provinsi = DB::table('provinsi')
+        ->where('id_provinsi', '=', $id)
+        ->first();
       $data=DB::table('provinsi')
       ->join(
         'kabupaten',
@@ -36,6 +39,7 @@ class KabupatenController extends Controller
         ->get();
       return view('admin.kabupaten',[
         'data'=>$data,
+        'provinsi' => $provinsi,
         'id_provinsi' => $id,
       ]);
   }

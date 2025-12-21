@@ -31,8 +31,12 @@
              @php($no++)
              @endforeach
            </select>
-            </td>
+           </td>
            </tr>
+          <tr>
+            <td>Plot Aktif</td>
+            <td> : {{ $data_pengukuran->nama_plot ?? '-' }} (Pengukuran ke-{{ $data_pengukuran->pengukuran_ke ?? '-' }})</td>
+          </tr>
          </tbody>
          <tfoot>
 
@@ -101,7 +105,7 @@
             <a class="btn btn-primary btn-xs" href="{{route('user.bio_pohon',encrypt($id))}}">Biodiversitas Pohon</a>
             <a class="btn btn-primary btn-xs" href="{{route('user.bio_fauna',encrypt($id))}}">Biodiversitas Fauna</a>
             <a class="btn btn-info btn-xs" href="{{route('user.kimia',encrypt($id))}}">Kualitas Tapak (Kimia)</a>
-            <a class="btn btn-info btn-xs" href="{{route('user.fisika',encrypt($id))}}">Kualitas Tapak (Fisik)</a>
+            <a class="btn btn-info btn-xs" href="{{route('user.fisika',encrypt($id))}}">Kualitas Tapak (Fisika)</a>
         </h4>
 
         </div>
@@ -307,3 +311,4 @@ $(document).ready(function() {
    @endsection
 
   @endsection
+

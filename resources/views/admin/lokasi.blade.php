@@ -11,7 +11,7 @@
       <div class="box">
         <div class="box-header">
           <h3 class="box-title">Data Lokasi</h3>
-          <button type="button" class=" btn btn-primary btn-xs pull-right" data-toggle="modal" data-target="#tambah_lokasi">
+          <button type="button" class="btn btn-primary btn-sm pull-right" style="height:30px;line-height:1.2" data-toggle="modal" data-target="#tambah_lokasi">
             <i class="fa fa-plus"></i></button>
         </div>
         <!-- /.box-header -->
@@ -34,7 +34,7 @@
               <td>
               <a class="fa fa-search btn btn-info btn-xs" data-info=""href="{{route('admin.kabupaten', encrypt($d->id_provinsi))}}"></a>
               <a class="fa fa-edit btn btn-warning btn-xs" data-nm_lokasi="{{$d->id_provinsi}}" data-toggle="modal" data-target="#edit_lokasi"></a>
-              <a class="fa fa-trash btn btn-danger btn-xs" data-nm_lokasi="{{$d->id_provinsi}}" data-toggle="modal" data-target="#delete_lokasi" href=""></a>
+              <a class="fa fa-trash btn btn-danger btn-xs" data-nm_lokasi="{{$d->id_provinsi}}" data-nama_provinsi="{{$d->nama_provinsi}}" data-toggle="modal" data-target="#delete_lokasi" href=""></a>
               </td>
             </tr>
             @endforeach
@@ -67,7 +67,7 @@
 <script src="{{asset('Admin/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js')}}"></script>
 @endsection
 
-   @section('script_table')
+  @section('script_table')
     <script>
    $(function () {
      $('#data_lokasi').DataTable({
@@ -93,6 +93,7 @@
          },
        }
      })
+
    })
     </script>
    @endsection

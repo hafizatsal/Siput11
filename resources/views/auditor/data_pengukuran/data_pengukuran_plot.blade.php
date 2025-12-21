@@ -79,9 +79,11 @@
 
 @endsection
 
+@push('script_tambahan')
 <script src="{{asset('Admin/modal_ajax.min.js')}}"></script>
-<script src="{{asset('Admin/bower_components/jquery/dist/jquery.min.js')}}"></script>
+@endpush
 
+@push('script_tambahan')
 <script type="text/javascript">
 $(document).ready(function(){
 
@@ -180,3 +182,4 @@ $('#kategori').change(function(e){
 
 });
 </script>
+@endpush

@@ -4,8 +4,8 @@
 @section('judul_halaman','Halaman Detail Plot')
 @section('breadcrumb')
 <li><a href="{{route('user.home')}}"><i class="fa fa-dashboard"></i> Home</a></li>
-<li><a href="{{route('data_pengukuran_home')}}">Data Pengukuran</a></li>
-<li><a href="{{route('detail', encrypt($id_klaster))}}">Detail Pengukuran</a></li>
+<li><a href="{{route('user.data_pengukuranplot')}}">Data Pengukuran</a></li>
+<li><a href="{{route('user.lihatpengukurans', encrypt($id_klaster))}}">Detail Pengukuran</a></li>
 <li><a href="#">Detail Plot</a></li>
 @endsection
 @section('main_section')
@@ -40,7 +40,7 @@
 
            <tr>
              <td>Koordinat Titik Pusat</td>
-             <td> : {{$plot->koordinat_BT}}, {{$plot->koordinat_LS}}</td>
+             <td> : {{$plot->koordinat_bt_display ?? $plot->koordinat_BT}}, {{$plot->koordinat_ls_display ?? $plot->koordinat_LS}}</td>
              <td></td>
            </tr>
 

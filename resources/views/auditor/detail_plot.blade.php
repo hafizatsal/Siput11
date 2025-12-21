@@ -40,7 +40,7 @@
 
            <tr>
              <td>Koordinat Titik Pusat</td>
-             <td> : {{$plot->koordinat_BT}}, {{$plot->koordinat_LS}}</td>
+             <td> : {{$plot->koordinat_bt_display ?? $plot->koordinat_BT}}, {{$plot->koordinat_ls_display ?? $plot->koordinat_LS}}</td>
              <td></td>
            </tr>
 

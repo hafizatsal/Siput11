@@ -35,7 +35,7 @@
   <div class="box-header with-border">
     <h3 class="box-title">Nilai Kesehatan Hutan</h3>
     <h4>
-      <form id="skor_akhir" method="post" class="" action="{{route('penilaian_kesehatan')}}">
+      <form id="skor_akhir" method="post" class="" action="{{route('user.penilaian_kesehatan')}}">
       {{csrf_field()}}
       <input type="hidden" id="nama_data_klaster1" name="nama_data_klaster1" value="{{$id_data_klaster}}">
       <input type="hidden" id="pengukuran_ke" name="pengukuran_ke" value="{{$pengukuran_ke}}">
@@ -187,7 +187,7 @@
 
         <td style="text-align: center; vertical-align: middle">
 
-          <form id="pengukuran_pertama" method="post" class="" action="{{route('penilaian_kesehatan')}}">
+          <form id="pengukuran_pertama" method="post" class="" action="{{route('user.penilaian_kesehatan')}}">
           {{csrf_field()}}
           <input type="hidden" id="pengukuranke" name="pengukuranke" value="1">
           <input type="hidden" id="tahun_pengukuran" name="tahun_pengukuran" value="{{$id_klaster[0]->id_data_klaster}}">
@@ -273,7 +273,7 @@
 
         <td style="text-align: center; vertical-align: middle">
 
-          <form id="pengukuran_kedua" method="post" class="" action="{{route('penilaian_kesehatan')}}">
+          <form id="pengukuran_kedua" method="post" class="" action="{{route('user.penilaian_kesehatan')}}">
           {{csrf_field()}}
           <input type="hidden" id="pengukuranke" name="pengukuranke" value="2">
           <input type="hidden" id="tahun_pengukuran" name="tahun_pengukuran" value="{{$id_klaster2[0]->id_data_klaster2}}">
@@ -359,7 +359,7 @@
 
         <td style="text-align: center; vertical-align: middle">
 
-          <form id="pengukuran_ketiga" method="post" class="" action="{{route('penilaian_kesehatan')}}">
+          <form id="pengukuran_ketiga" method="post" class="" action="{{route('user.penilaian_kesehatan')}}">
           {{csrf_field()}}
           <input type="hidden" id="pengukuranke" name="pengukuranke" value="3">
           <input type="hidden" id="tahun_pengukuran" name="tahun_pengukuran" value="{{$id_klaster3[0]->id_data_klaster2}}">
@@ -434,6 +434,8 @@
 </script>
 
    @section('script_table')
+  <script>
+
    $(function () {
 
      $('#nilai_kesehatan').DataTable({
@@ -470,5 +472,9 @@
            .responsive.recalc();
      });
    })
-   @endsection
+   
+  </script>
 @endsection
+@endsection
+
+

@@ -23,8 +23,12 @@
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
   <!--[if lt IE 9]>
+@push('script_tambahan')
   <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+@endpush
+@push('script_tambahan')
   <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+@endpush
   <![endif]-->
 
   <!-- Google Font -->
@@ -158,35 +162,54 @@
 <!-- ./wrapper -->
 
 <!-- jQuery 3 -->
-<script src="{{asset('Admin/bower_components/jquery/dist/jquery.min.js')}}"></script>
 <!-- Bootstrap 3.3.7 -->
+@push('script_tambahan')
 <script src="{{asset('Admin/bower_components/bootstrap/dist/js/bootstrap.min.js')}}"></script>
+@endpush
 @yield('data_table')
 <!-- SlimScroll -->
+@push('script_tambahan')
 <script src="{{asset('Admin/bower_components/jquery-slimscroll/jquery.slimscroll.min.js')}}"></script>
+@endpush
 <!-- FastClick -->
+@push('script_tambahan')
 <script src="{{asset('Admin/bower_components/fastclick/lib/fastclick.js')}}"></script>
+@endpush
 <!-- AdminLTE App -->
+@push('script_tambahan')
 <script src="{{asset('Admin/dist/js/adminlte.min.js')}}"></script>
+@endpush
 <!-- AdminLTE for demo purposes -->
+@push('script_tambahan')
 <script src="{{asset('Admin/dist/js/demo.js')}}"></script>
+@endpush
 <!-- page script -->
 
+@push('script_tambahan')
 <script>
 
 @yield('script_table')
 </script>
+@endpush
 
 
+@push('script_tambahan')
   <script type="text/javascript">
 
 
 
   </script>
+@endpush
+@push('script_tambahan')
   <script src="{{asset('Admin/modal_ajax.min.js')}}"></script>
+@endpush
 
+@push('script_tambahan')
   <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+@endpush
+@push('script_tambahan')
   <script src="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-validator/0.4.5/js/bootstrapvalidator.min.js"></script>
+@endpush
 
 </body>
 </html>

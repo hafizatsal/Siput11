@@ -46,8 +46,10 @@
 </div>
 <!-- /.modal -->
 
+@push('script_tambahan')
 <script type="text/javascript">
 $(document).ready(function(){
 
 });
 </script>
+@endpush

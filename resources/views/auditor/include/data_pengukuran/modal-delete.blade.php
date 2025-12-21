@@ -41,6 +41,7 @@
 </div>
 
 {{-- ================= SCRIPT DELETE ================= --}}
+@push('script_tambahan')
 <script>
     // Saat tombol delete ditekan
     $(document).on("click", ".btnDeletePengukuran", function () {
@@ -63,3 +64,4 @@
         $("#modalDeletePengukuran").modal("show");
     });
 </script>
+@endpush

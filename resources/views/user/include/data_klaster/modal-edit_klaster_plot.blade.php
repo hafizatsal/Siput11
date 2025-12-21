@@ -370,6 +370,7 @@
 @endsection
 
 @section('script_table')
+  <script>
   $('[data-mask2]').inputmask()
   $(document).ready(function () {
   	var validate = 0;
@@ -1130,4 +1131,5 @@
   	});
 
   });
+  </script>
 @endsection

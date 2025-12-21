@@ -3,7 +3,7 @@
 @section('css')
 @endsection
 @section('active_plot_ukur','active')
-@section('active_plot','active')
+@section('active_data_plot','active')
 @section('breadcrumb')
 <li><a href="#">Data Plot</a></li>
 @endsection

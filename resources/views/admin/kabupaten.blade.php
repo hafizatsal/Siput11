@@ -11,7 +11,12 @@
     <div class="col-xs-12">
       <div class="box">
         <div class="box-header">
-          <h3 class="box-title">Data Kabupaten</h3>
+          <h3 class="box-title">
+            Data Kabupaten
+            @if(!empty($provinsi) && !empty($provinsi->nama_provinsi))
+              Pada Provinsi {{$provinsi->nama_provinsi}}
+            @endif
+          </h3>
           <button type="button" class=" btn btn-primary btn-xs pull-right" data-toggle="modal" data-target="#tambah_kabupaten">
             <i class="fa fa-plus"></i></button>
         </div>

@@ -1,7 +1,7 @@
 ﻿@extends('layouts.layout')
 @section('title','Halaman Klaster')
 @section('active_plot_ukur','active')
-@section('active_klaster','active')
+@section('active_data_klaster_plot','active')
 @section('judul_halaman','Halaman Detail Klaster')
 @section('css')
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
@@ -189,7 +189,7 @@
                 @if($ijin==Auth::user()->id)
                 <a class="btn btn-warning btn-md" data-plotid={{$p->id_plot}} data-nama_plot="{{$p->nama_plot}}" data-koorlintang="{{$lintang_masked[$id]}}" data-koorbujur="{{$bujur_masked[$id]}}" data-toggle="modal" data-target="#edit-plot" href="#"><i class="fa fa-edit"></i></a>
                 @endif
-                <a class="btn btn-success btn-md" href="{{ route('user.lihat_plot', encrypt($p->id_plot))}}"><i class="fa fa-bar-chart-o"></i></a>
+                <a class="btn btn-success btn-md" href="{{ route('user.lihat_plot', encrypt($p->id_plot))}}"><i class="fa fa-info-circle"></i></a>
               </td>
             </tr>
             @php($id++)

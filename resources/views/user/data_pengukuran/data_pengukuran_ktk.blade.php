@@ -77,7 +77,7 @@
                       <div class="col-md-9 col-sm-9 col-xs-12">
                         <select required class="form-control" name="nama_parameter" id="nama_parameter">
                           <option value="">Pilih Parameter</option>
-                          <option value="1">Sifat Fisik</option>
+                          <option value="1">Sifat Fisika</option>
                           <option value="2">Sifat Kimia</option>
                         </select>
                       </div>
@@ -290,3 +290,4 @@ $(document).ready(function(){
 
 });
 </script>
+

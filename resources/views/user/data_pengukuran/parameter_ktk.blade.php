@@ -27,7 +27,7 @@
 
             <tr>
               <td>1</td>
-              <td>Sifat Fisik</td>
+              <td>Sifat Fisika</td>
               <td>
               <a class="fa fa-search btn btn-success btn-xs" data-info="" href="{{route('user.fisika',encrypt($id))}}"></a>
               </td>
@@ -96,3 +96,4 @@
    @endsection
 
   @endsection
+

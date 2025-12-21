@@ -81,6 +81,8 @@
 
   <!-- jquery untuk mengatur datatable -->
    @section('script_table')
+  <script>
+
    $(function () {
      $('#data_pengukuran').DataTable({
        'paging'      : true,
@@ -93,6 +95,9 @@
        'lengthMenu'  : [[5,10,20],[5,10,20]]
      })
    })
-   @endsection
+   
+  </script>
+@endsection
 
   @endsection
+

@@ -10,7 +10,7 @@
    </style>
 @endsection
 @section('active_plot_ukur','active')
-@section('active_plot','active')
+@section('active_data_plot','active')
 @section('breadcrumb')
 <li><a href="{{route('user.data_klaster')}}">Data Klaster</a></li>
 <li><a href="{{route('user.klaster_plot',encrypt($id_data_klaster2))}}">Data Klaster Plot</a></li>

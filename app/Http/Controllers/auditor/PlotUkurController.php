@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\auditor;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Input;
 use App\Http\Controllers\Controller;
 use App\Exceptions\CustomException;
 use Illuminate\Database\QueryException;
@@ -69,6 +68,144 @@ class PlotUkurController extends Controller
 
       return view('auditor.PlotUkur.data_plot',compact('data_klaster')
       );
+    }
+
+    // memasukkan data kedalam tbl_data_klaster
+    public function insert(Request $req)
+    {
+      $req->validate([
+          'pengukuranke1'=>'required|integer',
+          'tahun_pengukuran_modal'=>'required|date',
+          'nama_pengukur'=>'required|regex:/^[a-zA-Z,\' ]{2,50}$/',
+          'kategori_modal' => 'unique:kategori_klaster,kategori,NULL,pengukuran_ke',
+        ]);
+
+      $pengukuran_ke = $req->input('pengukuranke1');
+      $tahun_pengukuran = $req->input('tahun_pengukuran_modal');
+      $nama_pengukur = $req->input('nama_pengukur');
+      $kategori = $req->input('kategori_modal');
+      $id_data_klaster2 = $req->input('tahun_pengukuran_pertama');
+      $kategori2 = $req->input('pengukur_pertama');
+
+      if($pengukuran_ke==1){
+        $req->validate([
+        'kategori_modal'=>'required|regex:/^[a-zA-Z() ]{2,50}$/',
+        ]);
+        try{
+          $data_klaster = array(
+            'pengukuran_ke'=> $pengukuran_ke,
+            'tahun_pengukuran'=> $tahun_pengukuran,
+            'nama_pengukur'=> $nama_pengukur,
+            'kategori'=> $kategori,
+            "input_by"=> Auth::User()->id,
+          );
+
+          DB::table('kategori_klaster')->insert($data_klaster);
+
+          $id_data_klaster = DB::table('kategori_klaster')
+          ->select(DB::raw('MAX(id_data_klaster) AS id_data_klaster'))
+          ->where('input_by','=',Auth::user()->id)
+          ->first();
+
+          $data_tertimbang = array(
+            "id_data_klaster" => $id_data_klaster->id_data_klaster,
+          );
+
+          DB::table('nilai_tertimbang_copy')->insert($data_tertimbang);
+          session()->flash('insert', 'Data berhasil ditambah.');
+        }
+        catch(\Illuminate\Database\QueryException $e){
+          throw new CustomException($e->getMessage());
+        }
+      }
+      else if($pengukuran_ke==2){
+        $req->validate([
+            'pengukur_pertama'=>'required',
+            'tahun_pengukuran_pertama'=>'required|unique:kategori_klaster,id_data_klaster2,NULL,pengukuran_ke',
+          ]);
+        try{
+          $data_klaster = array(
+            'id_data_klaster2' => $id_data_klaster2,
+            'pengukuran_ke'=> $pengukuran_ke,
+            'tahun_pengukuran'=> $tahun_pengukuran,
+            'nama_pengukur'=> $nama_pengukur,
+            'kategori'=> $kategori2,
+            "input_by"=> Auth::User()->id,
+          );
+
+          DB::table('kategori_klaster')->insert($data_klaster);
+
+          $id_data_klaster = DB::table('kategori_klaster')
+          ->where('id_data_klaster2','=',$id_data_klaster2)
+          ->where('pengukuran_ke','=',2)
+          ->first();
+
+          $data_tertimbang = array(
+            "id_data_klaster" => $id_data_klaster->id_data_klaster,
+          );
+
+          DB::table('nilai_tertimbang_copy')->insert($data_tertimbang);
+          session()->flash('insert', 'Data berhasil ditambah.');
+        }
+        catch(\Illuminate\Database\QueryException $e){
+          throw new CustomException($e->getMessage());
+        }
+
+        $data_semua_klaster = DB::table('tbl_klaster_plot')
+        ->join('kategori_klaster','kategori_klaster.id_data_klaster','=','tbl_klaster_plot.id_data_klaster')
+        ->where('tbl_klaster_plot.id_data_klaster','=',$id_data_klaster2)->get();
+        $z=0;
+        foreach ($data_semua_klaster as $data_semua_klaster) {
+          $id_klaster2[$z] = $data_semua_klaster->id_klaster_plot;
+          $z++;
+        }
+
+        for($i=0;$i<$z;$i++){
+          $data_semua_plot = DB::table('tbl_plot')
+          ->join('tbl_klaster_plot','tbl_klaster_plot.id_klaster_plot','=','tbl_plot.id_klaster_plot')
+          ->where('tbl_plot.id_klaster_plot','=',$id_klaster2[$i])
+          ->get();
+
+          $id_plot[$i][0] = $data_semua_plot[0]->id_plot;
+          $id_plot[$i][1] = $data_semua_plot[1]->id_plot;
+          $id_plot[$i][2] = $data_semua_plot[2]->id_plot;
+          $id_plot[$i][3] = $data_semua_plot[3]->id_plot;
+
+          $pengukuran_master = array(
+            'pengukuran_ke' => $pengukuran_ke,
+            'id_data_klaster' => $id_data_klaster->id_data_klaster,
+            'id_plot' => $id_plot[$i][0],
+            'tahun_pengukuran' => $tahun_pengukuran,
+            'nama_pengukur' => $nama_pengukur,
+          );
+          DB::table('pengukuran_master')->insert($pengukuran_master);
+          $pengukuran_master = array(
+            'pengukuran_ke' => $pengukuran_ke,
+            'id_data_klaster' => $id_data_klaster->id_data_klaster,
+            'id_plot' => $id_plot[$i][1],
+            'tahun_pengukuran' => $tahun_pengukuran,
+            'nama_pengukur' => $nama_pengukur,
+          );
+          DB::table('pengukuran_master')->insert($pengukuran_master);
+          $pengukuran_master = array(
+            'pengukuran_ke' => $pengukuran_ke,
+            'id_data_klaster' => $id_data_klaster->id_data_klaster,
+            'id_plot' => $id_plot[$i][2],
+            'tahun_pengukuran' => $tahun_pengukuran,
+            'nama_pengukur' => $nama_pengukur,
+          );
+          DB::table('pengukuran_master')->insert($pengukuran_master);
+          $pengukuran_master = array(
+            'pengukuran_ke' => $pengukuran_ke,
+            'id_data_klaster' => $id_data_klaster->id_data_klaster,
+            'id_plot' => $id_plot[$i][3],
+            'tahun_pengukuran' => $tahun_pengukuran,
+            'nama_pengukur' => $nama_pengukur,
+          );
+          DB::table('pengukuran_master')->insert($pengukuran_master);
+        }
+      }
+      return redirect('auditor/plot_ukur/klaster');
     }
 
     public function lihat(Request $req)

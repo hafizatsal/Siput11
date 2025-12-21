@@ -213,9 +213,12 @@
 </div>
 </div>
 
+@push('script_tambahan')
 <script src="{{asset('Admin/modal_ajax.min.js')}}"></script>
+@endpush
+@push('script_tambahan')
 <script src="{{asset('Admin/bower_components/jquery/src/jquery.js')}}"></script>
-<script src="{{asset('Admin/bower_components/jquery/dist/jquery.min.js')}}"></script>
+@endpush
 
 {{-- include modal --}}
 @include('auditor.include.isi_pengukuran.modal_tambah_tanaman')
@@ -233,6 +236,7 @@
 <script src="{{asset('Admin/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js')}}"></script>
 @endsection
 
+@push('script_tambahan')
 <script type="text/javascript">
 $(document).ready(function() {
   // variabel untuk menampung jumlah nilai 3, 2, dan 1
@@ -1012,6 +1016,7 @@ var nilai_lokasi=0;
 
  });
 </script>
+@endpush
 
    @section('script_table')
    <script>

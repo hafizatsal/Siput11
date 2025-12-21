@@ -15,7 +15,7 @@
   <div class="box-header with-border">
     <h3 class="box-title">Skor Kesehatan Hutan Per Klaster</h3>
     <h4>
-      <form id="skor_akhir" method="post" class="" action="{{route('penilaian_kesehatan')}}">
+      <form id="skor_akhir" method="post" class="" action="{{route('user.penilaian_kesehatan')}}">
       {{csrf_field()}}
       <input type="hidden" id="nama_data_klaster1" name="nama_data_klaster1" value="{{$id_data_klaster}}">
       <input type="hidden" id="pengukuran_ke" name="pengukuran_ke" value="{{$pengukuran_ke}}">
@@ -25,7 +25,7 @@
       <input type="hidden" id="param_biodiv" name="param_biodiv" value="{{$param_biodiv}}">
       </form>
 
-      <form id="skor_indikator" method="post" class="" action="{{route('/penilaian/nilai_indikator')}}">
+      <form id="skor_indikator" method="post" class="" action="{{route('user.penilaian_kesehatan')}}">
       {{csrf_field()}}
       <input type="hidden" id="nama_data_klaster1" name="nama_data_klaster1" value="{{$id_data_klaster}}">
       <input type="hidden" id="pengukuran_ke" name="pengukuran_ke" value="{{$pengukuran_ke}}">
@@ -35,7 +35,7 @@
       <input type="hidden" id="param_biodiv" name="param_biodiv" value="{{$param_biodiv}}">
       </form>
 
-      <form id="skor_tertimbang" method="post" class="" action="{{route('/penilaian/nilai_tertimbang')}}">
+      <form id="skor_tertimbang" method="post" class="" action="{{route('user.penilaian_kesehatan')}}">
       {{csrf_field()}}
       <input type="hidden" id="nama_data_klaster1" name="nama_data_klaster1" value="{{$id_data_klaster}}">
       <input type="hidden" id="pengukuran_ke" name="pengukuran_ke" value="{{$pengukuran_ke}}">
@@ -45,7 +45,7 @@
       <input type="hidden" id="param_biodiv" name="param_biodiv" value="{{$param_biodiv}}">
       </form>
 
-      <form id="skor_skor" method="post" class="" action="{{route('/penilaian/nilai_skor')}}">
+      <form id="skor_skor" method="post" class="" action="{{route('user.penilaian_kesehatan')}}">
       {{csrf_field()}}
       <input type="hidden" id="nama_data_klaster1" name="nama_data_klaster1" value="{{$id_data_klaster}}">
       <input type="hidden" id="pengukuran_ke" name="pengukuran_ke" value="{{$pengukuran_ke}}">
@@ -55,7 +55,7 @@
       <input type="hidden" id="param_biodiv" name="param_biodiv" value="{{$param_biodiv}}">
       </form>
 
-      <form id="skor_range" method="post" class="" action="{{route('/penilaian/range')}}">
+      <form id="skor_range" method="post" class="" action="{{route('user.penilaian_kesehatan')}}">
       {{csrf_field()}}
       <input type="hidden" id="nama_data_klaster1" name="nama_data_klaster1" value="{{$id_data_klaster}}">
       <input type="hidden" id="pengukuran_ke" name="pengukuran_ke" value="{{$pengukuran_ke}}">
@@ -65,7 +65,7 @@
       <input type="hidden" id="param_biodiv" name="param_biodiv" value="{{$param_biodiv}}">
       </form>
 
-      <form id="skor_analisis" method="post" class="" action="{{route('/penilaian/analisis')}}">
+      <form id="skor_analisis" method="post" class="" action="{{route('user.penilaian_kesehatan')}}">
       {{csrf_field()}}
       <input type="hidden" id="nama_data_klaster1" name="nama_data_klaster1" value="{{$id_data_klaster}}">
       <input type="hidden" id="pengukuran_ke" name="pengukuran_ke" value="{{$pengukuran_ke}}">
@@ -130,6 +130,8 @@
 </script>
 
    @section('script_table')
+  <script>
+
    $(function () {
      $('#Nilai_Indikator').DataTable({
        'paging'      : true,
@@ -156,5 +158,10 @@
        'autoWidth'   : false
      })
    })
-   @endsection
+   
+  </script>
 @endsection
+@endsection
+
+
+
