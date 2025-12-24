@@ -7,7 +7,7 @@
         <h4 class="modal-title">Tambah Instansi</h4>
       </div>
       <div class="modal-body">
-        <form role="form" method="get" action="{{route('admin.instansi.insert')}}"
+        <form role="form" method="post" action="{{route('admin.instansi.insert')}}"
         onsubmit="document.getElementById('submit_instansi').disabled=true;
         document.getElementById('submit_instansi').value='Sedang menyimpan...';">
           {{csrf_field()}}
@@ -56,3 +56,4 @@ var v_nama_instansi=0;
 
 });
 </script>
+

@@ -7,7 +7,7 @@
         <h4 class="modal-title">Edit Fauna</h4>
       </div>
       <div class="modal-body">
-        <form role="form" method="get" action="{{route('admin.edit_fauna')}}"
+        <form role="form" method="post" action="{{route('admin.edit_fauna')}}"
         onsubmit="document.getElementById('edit_fauna').disabled=true;
         document.getElementById('edit_fauna').value='Sedang menyimpan...';">
           {{csrf_field()}}
@@ -108,3 +108,4 @@ var v_nama_latin_fauna2=0;
 
 });
 </script>
+

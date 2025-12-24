@@ -7,7 +7,7 @@
         <h4 class="modal-title">Tambah Nilai Tertimbag</h4>
       </div>
       <div class="modal-body">
-        <form role="form" method="get" action="tertimbang/insert">
+        <form role="form" method="post" action="{{route('admin.tertimbang.insert')}}">
           {{csrf_field()}}
     <div class="box-body">
       <div id="nilai_tertimbang" class="form-group">
@@ -57,3 +57,4 @@ var v_nama_nilai_tertimbang=0;
 
 });
 </script>
+

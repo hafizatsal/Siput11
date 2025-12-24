@@ -7,7 +7,7 @@
         <h4 class="modal-title">Edit Jenis</h4>
       </div>
       <div class="modal-body">
-        <form role="form" method="get" action="">
+        <form role="form" method="post" action="">
           {{csrf_field()}}
     <div class="box-body">
       <div id="jenis_hutan2" class="form-group">
@@ -57,3 +57,4 @@ var v_nama_jenis_hutan2=0;
 
 });
 </script>
+

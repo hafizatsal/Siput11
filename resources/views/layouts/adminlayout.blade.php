@@ -93,10 +93,6 @@
 </head>
 
 <body class="hold-transition skin-blue sidebar-mini">
-    @php
-    $foto = DB::table('foto_user')->where('id_user', Auth::user()->id)->first();
-    $foto_get = DB::table('foto_user')->where('id_user', Auth::user()->id)->get();
-@endphp
     <div class="wrapper">
 
         <header class="main-header">
@@ -124,13 +120,13 @@
                         <!-- User Account: style can be found in dropdown.less -->
                         <li class="dropdown user user-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                <img src="#" id="img1" class="user-image" alt="User Image">
+                                <img src="{{ $fotoUrl ?? asset('Admin/dist/img/default-user.png') }}" id="img1" class="user-image" alt="User Image">
                                 <span class="hidden-xs">{{ Auth::user()->nama }}</span>
                             </a>
                             <ul class="dropdown-menu">
                                 <!-- User image -->
                                 <li class="user-header">
-                                    <img src="#" id="img2" class="img-circle" alt="User Image">
+                                    <img src="{{ $fotoUrl ?? asset('Admin/dist/img/default-user.png') }}" id="img2" class="img-circle" alt="User Image">
 
                                     <p>
                                         {{ Auth::user()->nama }}
@@ -171,7 +167,7 @@
                 <!-- Sidebar user panel -->
                 <div class="user-panel">
                     <div class="pull-left image">
-                        <img src="#" id="img3" class="img-circle" alt="User Image" style="height:50px;">
+                        <img src="{{ $fotoUrl ?? asset('Admin/dist/img/default-user.png') }}" id="img3" class="img-circle" alt="User Image" style="height:50px;">
                     </div>
                     <div class="pull-left info">
                         <p>{{ Auth::user()->nama }} (Admin)</p>
@@ -336,26 +332,10 @@
     <script src="{{ asset('Admin/dist/js/adminlte.min.js') }}"></script>
     <!-- AdminLTE for demo purposes -->
     <script src="{{ asset('Admin/dist/js/demo.js') }}"></script>
+    @yield('script_table')
     <!-- page script -->
     <script>
-        @yield('script_table')
-
         $(document).ready(function() {
-
-            @if (count($foto_get) != 0)
-                {
-                    $("#img1").attr("src", "{{ asset('upload/profile/' . $foto->filename) }}");
-                    $("#img2").attr("src", "{{ asset('upload/profile/' . $foto->filename) }}");
-                    $("#img3").attr("src", "{{ asset('upload/profile/' . $foto->filename) }}");
-                }
-            @else
-                {
-                    $("#img1").attr("src", "{{ asset('Admin/dist/img/default-user.png') }}");
-                    $("#img2").attr("src", "{{ asset('Admin/dist/img/default-user.png') }}");
-                    $("#img3").attr("src", "{{ asset('Admin/dist/img/default-user.png') }}");
-                }
-            @endif
-
             setTimeout(function() {
                 $('.alert-dismissible').fadeOut(200);
             }, 4000);

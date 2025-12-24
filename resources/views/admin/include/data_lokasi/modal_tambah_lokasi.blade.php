@@ -7,7 +7,7 @@
         <h4 class="modal-title">Tambah Provinsi</h4>
       </div>
       <div class="modal-body">
-        <form role="form" method="get" action="{{route('admin.lokasi.insert')}}"
+        <form role="form" method="post" action="{{route('admin.lokasi.insert')}}"
         onsubmit="document.getElementById('submit_lokasi').disabled=true;
         document.getElementById('submit_lokasi').value='Sedang menyimpan...';">
           {{csrf_field()}}
@@ -57,3 +57,4 @@ var v_nama_lokasi=0;
 
 });
 </script>
+

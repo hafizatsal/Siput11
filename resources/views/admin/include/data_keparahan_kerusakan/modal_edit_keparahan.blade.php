@@ -7,7 +7,7 @@
         <h4 class="modal-title">Edit Kerusakan Keparahan</h4>
       </div>
       <div class="modal-body">
-        <form role="form" method="get" action="{{route('admin.edit_keparahan_kerusakan')}}"
+        <form role="form" method="post" action="{{route('admin.edit_keparahan_kerusakan')}}"
         onsubmit="document.getElementById('edit_keparahan_kerusakan2').disabled=true;
         document.getElementById('edit_keparahan_kerusakan2').value='Sedang menyimpan...';">
           {{csrf_field()}}
@@ -65,3 +65,4 @@ $(document).ready(function(){
 
 });
 </script>
+

@@ -7,7 +7,7 @@
         <h4 class="modal-title">Edit Fungsi</h4>
       </div>
       <div class="modal-body">
-        <form role="form" method="get" action="{{route('admin.edit_fungsi')}}"
+        <form role="form" method="post" action="{{route('admin.edit_fungsi')}}"
         onsubmit="document.getElementById('edit_fungsi').disabled=true;
         document.getElementById('edit_fungsi').value='Sedang menyimpan...';">
           {{csrf_field()}}
@@ -83,3 +83,4 @@ var v_nama_fungsi_hutan2=0;
 
 });
 </script>
+

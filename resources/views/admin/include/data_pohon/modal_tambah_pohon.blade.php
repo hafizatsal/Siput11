@@ -7,7 +7,7 @@
         <h4 class="modal-title">Tambah Pohon</h4>
       </div>
       <div class="modal-body">
-        <form role="form" method="get" action="pohon/insert"
+        <form role="form" method="post" action="{{route('admin.pohon.insert')}}"
         onsubmit="document.getElementById('submit_pohon').disabled=true;
         document.getElementById('submit_pohon').value='Sedang menyimpan...';">
           {{csrf_field()}}
@@ -81,3 +81,4 @@ var v_nama_latin_pohon=0;
 
 });
 </script>
+

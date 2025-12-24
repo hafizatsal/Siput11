@@ -7,7 +7,7 @@
         <h4 class="modal-title">Edit Pohon</h4>
       </div>
       <div class="modal-body">
-        <form role="form" method="get" action="{{route('admin.edit_pohon')}}"
+        <form role="form" method="post" action="{{route('admin.edit_pohon')}}"
         onsubmit="document.getElementById('edit_pohon').disabled=true;
         document.getElementById('edit_pohon').value='Sedang menyimpan...';">
           {{csrf_field()}}
@@ -110,3 +110,4 @@ var v_nama_latin_pohon2=0;
 
 });
 </script>
+

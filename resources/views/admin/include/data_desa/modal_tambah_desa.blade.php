@@ -7,7 +7,7 @@
         <h4 class="modal-title">Tambah Desa</h4>
       </div>
       <div class="modal-body">
-        <form role="form" method="get" action="{{route('admin.desa.insert')}}"
+        <form role="form" method="post" action="{{route('admin.desa.insert')}}"
         onsubmit="document.getElementById('submit_desa').disabled=true;
         document.getElementById('submit_desa').value='Sedang menyimpan...';">
           {{csrf_field()}}
@@ -57,3 +57,4 @@ var v_nama_desa=0;
 
 });
 </script>
+

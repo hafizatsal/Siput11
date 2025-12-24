@@ -7,7 +7,7 @@
         <h4 class="modal-title">Tambah Fungsi</h4>
       </div>
       <div class="modal-body">
-        <form role="form" method="get" action="{{route('admin.fungsi.insert')}}"
+        <form role="form" method="post" action="{{route('admin.fungsi.insert')}}"
         onsubmit="document.getElementById('submit_fungsi').disabled=true;
         document.getElementById('submit_fungsi').value='Sedang menyimpan...';">
           {{csrf_field()}}
@@ -56,3 +56,4 @@ var v_nama_fungsi_hutan=0;
 
 });
 </script>
+

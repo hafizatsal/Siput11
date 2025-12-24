@@ -7,7 +7,7 @@
         <h4 class="modal-title">Edit Instansi</h4>
       </div>
       <div class="modal-body">
-        <form role="form" method="get" action="{{route('admin.edit_instansi')}}"
+        <form role="form" method="post" action="{{route('admin.edit_instansi')}}"
         onsubmit="document.getElementById('edit_instansi').disabled=true;
         document.getElementById('edit_instansi').value='Sedang menyimpan...';">
           {{csrf_field()}}
@@ -84,3 +84,4 @@ var v_nama_instansi2=0;
 
 });
 </script>
+

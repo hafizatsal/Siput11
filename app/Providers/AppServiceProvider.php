@@ -29,5 +29,20 @@ class AppServiceProvider extends ServiceProvider
             }
             $view->with('pengumuman', $pengumuman);
         });
+
+        View::composer('layouts.adminlayout', function ($view) {
+            $defaultUrl = asset('Admin/dist/img/default-user.png');
+            try {
+                if (!auth()->check()) {
+                    $view->with('fotoUrl', $defaultUrl);
+                    return;
+                }
+                $foto = DB::table('foto_user')->where('id_user', auth()->id())->first();
+                $fotoUrl = $foto ? asset('upload/profile/' . $foto->filename) : $defaultUrl;
+            } catch (\Throwable $e) {
+                $fotoUrl = $defaultUrl;
+            }
+            $view->with('fotoUrl', $fotoUrl);
+        });
     }
 }

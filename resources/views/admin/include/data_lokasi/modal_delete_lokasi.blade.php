@@ -6,7 +6,7 @@
                <span aria-hidden="true">&times;</span></button>
              <h4 class="modal-title">Hapus Data</h4>
            </div>
-           <form class="" action="{{route('admin.hapus_lokasi')}}" method="get">
+           <form class="" action="{{route('admin.hapus_lokasi')}}" method="post">
              {{csrf_field()}}
            <div class="modal-body">
              <p>Apakah anda yakin ingin menghapus data provinsi <span id="hapus_nama_provinsi"></span> ini?</p>
@@ -35,3 +35,4 @@ $(document).ready(function(){
        });
     });
 </script>
+

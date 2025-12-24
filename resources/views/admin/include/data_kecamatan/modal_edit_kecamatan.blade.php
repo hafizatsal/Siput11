@@ -7,7 +7,7 @@
         <h4 class="modal-title">Edit Kecamatan</h4>
       </div>
       <div class="modal-body">
-        <form role="form" method="get" action="{{route('admin.edit_kecamatan')}}"
+        <form role="form" method="post" action="{{route('admin.edit_kecamatan')}}"
         onsubmit="document.getElementById('edit_kecamatan').disabled=true;
         document.getElementById('edit_kecamatan').value='Sedang menyimpan...';">
           {{csrf_field()}}
@@ -84,3 +84,4 @@ var v_nama_kecamatan2=0;
 
 });
 </script>
+

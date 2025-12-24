@@ -7,7 +7,7 @@
         <h4 class="modal-title">Tambah Fauna</h4>
       </div>
       <div class="modal-body">
-        <form role="form" method="get" action="{{route('admin.fauna.insert')}}"
+        <form role="form" method="post" action="{{route('admin.fauna.insert')}}"
         onsubmit="document.getElementById('submit_fauna').disabled=true;
         document.getElementById('submit_fauna').value='Sedang menyimpan...';">
           {{csrf_field()}}
@@ -81,3 +81,4 @@ var v_nama_latin_fauna=0;
 
 });
 </script>
+

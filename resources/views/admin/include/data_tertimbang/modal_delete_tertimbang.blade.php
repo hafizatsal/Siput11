@@ -6,7 +6,7 @@
                <span aria-hidden="true">&times;</span></button>
              <h4 class="modal-title">Hapus Data</h4>
            </div>
-           <form class="" action="hapus_tertimbang" method="get">
+           <form class="" action="{{route('admin.hapus_tertimbang')}}" method="post">
              {{csrf_field()}}
            <div class="modal-body">
              <p>Yakin ingin menghapus data?</p>
@@ -36,3 +36,4 @@ $(document).ready(function(){
        });
     });
        </script>
+

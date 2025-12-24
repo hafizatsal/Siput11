@@ -7,7 +7,7 @@
         <h4 class="modal-title">Tambah Hak</h4>
       </div>
       <div class="modal-body">
-        <form role="form" method="get" action="{{route('admin.hmjf.insert')}}"
+        <form role="form" method="post" action="{{route('admin.hmjf.insert')}}"
         onsubmit="document.getElementById('submit_hak').disabled=true;
         document.getElementById('submit_hak').value='Sedang menyimpan...';">
           {{csrf_field()}}
@@ -56,3 +56,4 @@ var v_nama_hak_milik=0;
 
 });
 </script>
+

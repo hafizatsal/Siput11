@@ -7,7 +7,7 @@
         <h4 class="modal-title">Edit Nilai Tajuk</h4>
       </div>
       <div class="modal-body">
-        <form role="form" method="get" action="{{route('admin.edit_tajuk')}}"
+        <form role="form" method="post" action="{{route('admin.edit_tajuk')}}"
         onsubmit="document.getElementById('edit_tajuk2').disabled=true;
         document.getElementById('edit_tajuk2').value='Sedang menyimpan...';">
           {{csrf_field()}}
@@ -75,3 +75,4 @@ $(document).ready(function(){
 
 });
 </script>
+

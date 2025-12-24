@@ -7,7 +7,7 @@
         <h4 class="modal-title">Tambah Kode Kerusakan Lokasi</h4>
       </div>
       <div class="modal-body">
-        <form role="form" method="get" action="{{route('admin.nilai_kerusakan_lokasi.insert')}}"
+        <form role="form" method="post" action="{{route('admin.nilai_kerusakan_lokasi.insert')}}"
         onsubmit="document.getElementById('submit_lokasi_kerusakan').disabled=true;
         document.getElementById('submit_lokasi_kerusakan').value='Sedang menyimpan...';">
           {{csrf_field()}}
@@ -44,3 +44,4 @@ $(document).ready(function(){
 
 });
 </script>
+

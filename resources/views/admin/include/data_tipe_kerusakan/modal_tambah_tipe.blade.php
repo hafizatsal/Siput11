@@ -7,7 +7,7 @@
         <h4 class="modal-title">Tambah Kode Kerusakan Tipe</h4>
       </div>
       <div class="modal-body">
-        <form role="form" method="get" action="{{route('admin.nilai_kerusakan_tipe.insert')}}"
+        <form role="form" method="post" action="{{route('admin.nilai_kerusakan_tipe.insert')}}"
         onsubmit="document.getElementById('submit_tipe_kerusakan').disabled=true;
         document.getElementById('submit_tipe_kerusakan').value='Sedang menyimpan...';">
           {{csrf_field()}}
@@ -44,3 +44,4 @@ $(document).ready(function(){
 
 });
 </script>
+

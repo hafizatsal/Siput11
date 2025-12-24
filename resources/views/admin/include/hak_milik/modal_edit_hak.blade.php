@@ -7,7 +7,7 @@
         <h4 class="modal-title">Edit Hak</h4>
       </div>
       <div class="modal-body">
-        <form role="form" method="get" action="{{route('admin.edit_hak')}}"
+        <form role="form" method="post" action="{{route('admin.edit_hak')}}"
         onsubmit="document.getElementById('edit_hak').disabled=true;
         document.getElementById('edit_hak').value='Sedang menyimpan...';">
           {{csrf_field()}}
@@ -83,3 +83,4 @@ var v_nama_hak_milik2=0;
 
 });
 </script>
+

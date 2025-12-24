@@ -7,7 +7,7 @@
         <h4 class="modal-title">Edit Lokasi</h4>
       </div>
       <div class="modal-body">
-        <form role="form" method="get" action="{{route('admin.edit_lokasi')}}"
+        <form role="form" method="post" action="{{route('admin.edit_lokasi')}}"
         onsubmit="document.getElementById('edit_kabupaten').disabled=true;
         document.getElementById('edit_kabupaten').value='Sedang menyimpan...';">
           {{csrf_field()}}
@@ -83,3 +83,4 @@ var v_nama_lokasi2=0;
 
 });
 </script>
+

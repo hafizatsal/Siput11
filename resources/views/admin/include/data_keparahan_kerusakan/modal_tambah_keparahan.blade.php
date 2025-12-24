@@ -7,7 +7,7 @@
         <h4 class="modal-title">Tambah Kerusakan Keparahan</h4>
       </div>
       <div class="modal-body">
-        <form role="form" method="get" action="{{route('admin.nilai_kerusakan_keparahan.insert')}}"
+        <form role="form" method="post" action="{{route('admin.nilai_kerusakan_keparahan.insert')}}"
         onsubmit="document.getElementById('submit_keparahan_kerusakan').disabled=true;
         document.getElementById('submit_keparahan_kerusakan').value='Sedang menyimpan...';">
           {{csrf_field()}}
@@ -40,3 +40,4 @@ $(document).ready(function(){
 
 });
 </script>
+

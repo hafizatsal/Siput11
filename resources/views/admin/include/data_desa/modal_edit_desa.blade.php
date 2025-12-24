@@ -7,7 +7,7 @@
         <h4 class="modal-title">Edit Desa</h4>
       </div>
       <div class="modal-body">
-        <form role="form" method="get" action="{{route('admin.edit_desa')}}"
+        <form role="form" method="post" action="{{route('admin.edit_desa')}}"
         onsubmit="document.getElementById('edit_desa').disabled=true;
         document.getElementById('edit_desa').value='Sedang menyimpan...';">
           {{csrf_field()}}
@@ -84,3 +84,4 @@ var v_nama_desa2=0;
 
 });
 </script>
+

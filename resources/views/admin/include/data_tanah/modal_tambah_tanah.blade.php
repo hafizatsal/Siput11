@@ -7,7 +7,7 @@
         <h4 class="modal-title">Tambah Sifat Tanah</h4>
       </div>
       <div class="modal-body">
-        <form role="form" method="get" action="{{route('admin.tanah.insert')}}"
+        <form role="form" method="post" action="{{route('admin.tanah.insert')}}"
         onsubmit="document.getElementById('submit_tanah').disabled=true;
         document.getElementById('submit_tanah').value='Sedang menyimpan...';">
           {{csrf_field()}}
@@ -56,3 +56,4 @@ var v_nama_indikator_tanah=0;
 
 });
 </script>
+

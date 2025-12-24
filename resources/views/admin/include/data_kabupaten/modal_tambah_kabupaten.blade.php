@@ -7,7 +7,7 @@
         <h4 class="modal-title">Tambah Kabupaten</h4>
       </div>
       <div class="modal-body">
-        <form role="form" method="get" action="{{route('admin.kabupaten.insert')}}"
+        <form role="form" method="post" action="{{route('admin.kabupaten.insert')}}"
         onsubmit="document.getElementById('submit_kabupaten').disabled=true;
         document.getElementById('submit_kabupaten').value='Sedang menyimpan...';">
           {{csrf_field()}}
@@ -57,3 +57,4 @@ var v_nama_kabupaten=0;
 
 });
 </script>
+
